@@ -1,0 +1,134 @@
+/**
+ * Sistema de Cores - Academia Pro
+ * Variáveis CSS organizadas por função e contexto
+ */
+
+:root {
+  /* ========== CORES PRIMÁRIAS (Azul) ========== */
+  /* Usadas para elementos principais, CTAs e navegação */
+  --primary-50: #eff6ff;        /* Backgrounds sutis de elementos primários */
+  --primary-100: #dbeafe;       /* Backgrounds de badges e tags */
+  --primary-200: #bfdbfe;       /* Borders hover de elementos primários */
+  --primary-600: #2563eb;       /* Cor principal de botões e links */
+  --primary-700: #1d4ed8;       /* Hover state de botões primários */
+  --primary-800: #1e40af;       /* Texto em badges primários */
+
+  /* ========== CORES NEUTRAS (Cinza) ========== */
+  /* Sistema de cores para backgrounds, borders e texto */
+  --neutral-50: #f9fafb;        /* Background principal da aplicação */
+  --neutral-100: #f3f4f6;       /* Background de cards secundários */
+  --neutral-200: #e5e7eb;       /* Borders e divisores */
+  --neutral-300: #d1d5db;       /* Borders de inputs */
+  --neutral-400: #9ca3af;       /* Ícones inativos e placeholders */
+  --neutral-500: #6b7280;       /* Texto secundário */
+  --neutral-600: #4b5563;       /* Texto de labels e descrições */
+  --neutral-700: #374151;       /* Texto de navegação e links secundários */
+  --neutral-800: #1f2937;       /* Texto em badges e elementos de destaque */
+  --neutral-900: #111827;       /* Texto principal e títulos */
+
+  /* ========== CORES DE SUCESSO (Verde) ========== */
+  /* Status positivos, confirmações e mensalidades pagas */
+  --success-50: #f0fdf4;        /* Background de alertas de sucesso */
+  --success-100: #dcfce7;       /* Background de badges de status positivo */
+  --success-200: #bbf7d0;       /* Borders de elementos de sucesso */
+  --success-600: #16a34a;       /* Ícones e texto de sucesso */
+  --success-700: #15803d;       /* Texto forte em badges de sucesso */
+  --success-800: #166534;       /* Texto em badges de status pago */
+
+  /* ========== CORES DE AVISO (Amarelo) ========== */
+  /* Alertas, pendências e mensalidades atrasadas */
+  --warning-50: #fefce8;        /* Background de alertas de aviso */
+  --warning-100: #fef9c3;       /* Background de badges de pendência */
+  --warning-200: #fef08a;       /* Borders de elementos de aviso */
+  --warning-600: #ca8a04;       /* Ícones e texto de aviso */
+  --warning-700: #a16207;       /* Texto forte em badges de aviso */
+  --warning-800: #854d0e;       /* Texto em badges de status pendente */
+
+  /* ========== CORES DE ERRO/PERIGO (Vermelho) ========== */
+  /* Ações destrutivas, erros e cancelamentos */
+  --danger-50: #fef2f2;         /* Background de alertas de erro */
+  --danger-100: #fee2e2;        /* Background de badges de erro */
+  --danger-200: #fecaca;        /* Borders de elementos de erro */
+  --danger-600: #dc2626;        /* Ícones e texto de erro, botão de logout */
+  --danger-700: #b91c1c;        /* Texto forte em badges de erro */
+  --danger-800: #991b1b;        /* Texto em badges de status cancelado */
+
+  /* ========== CORES DE DESTAQUE (Roxo) ========== */
+  /* Elementos especiais, métricas e relatórios */
+  --accent-50: #faf5ff;         /* Background de cards de métricas */
+  --accent-100: #f3e8ff;        /* Background de badges de destaque */
+  --accent-600: #9333ea;        /* Ícones e elementos de destaque */
+  --accent-700: #7e22ce;        /* Texto em elementos de destaque */
+
+  /* ========== GRADIENTES ========== */
+  /* Backgrounds decorativos e páginas de autenticação */
+  --gradient-start: #eff6ff;    /* Azul claro (blue-50) */
+  --gradient-end: #e0e7ff;      /* Indigo claro (indigo-100) */
+
+  /* ========== CORES SEMÂNTICAS ========== */
+  /* Mapeamento de cores para contextos específicos */
+
+  /* Planos e Assinaturas */
+  --plano-background: var(--neutral-50);
+  --plano-border: var(--neutral-200);
+  --plano-text: var(--neutral-900);
+  --plano-price: var(--primary-600);
+  --plano-selected: var(--primary-600);
+
+  /* Status de Mensalidades */
+  --mensalidade-paga: var(--success-700);
+  --mensalidade-pendente: var(--warning-700);
+  --mensalidade-atrasada: var(--danger-700);
+
+  /* Status de Agendamentos */
+  --agendamento-ativo: var(--primary-700);
+  --agendamento-concluido: var(--success-700);
+  --agendamento-cancelado: var(--danger-700);
+
+  /* Roles/Permissões */
+  --role-admin: var(--danger-600);
+  --role-recepcionista: var(--success-600);
+  --role-instrutor: var(--accent-600);
+  --role-aluno: var(--primary-600);
+  --role-guest: var(--warning-600);
+
+  /* Interface */
+  --navbar-background: #ffffff;
+  --navbar-border: var(--neutral-200);
+  --navbar-text: var(--neutral-700);
+  --navbar-text-hover: var(--primary-600);
+
+  --card-background: #ffffff;
+  --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+
+  --button-primary-bg: var(--primary-600);
+  --button-primary-hover: var(--primary-700);
+  --button-primary-text: #ffffff;
+
+  --input-border: var(--neutral-300);
+  --input-focus: var(--primary-500);
+  --input-background: #ffffff;
+
+  /* Badges e Tags */
+  --badge-blue-bg: var(--primary-100);
+  --badge-blue-text: var(--primary-800);
+
+  --badge-green-bg: var(--success-100);
+  --badge-green-text: var(--success-800);
+
+  --badge-yellow-bg: var(--warning-100);
+  --badge-yellow-text: var(--warning-800);
+
+  --badge-red-bg: var(--danger-100);
+  --badge-red-text: var(--danger-800);
+}
+
+/**
+ * Como usar:
+ *
+ * Background: background-color: var(--primary-50);
+ * Texto: color: var(--neutral-900);
+ * Botão: background-color: var(--button-primary-bg);
+ * Badge: background-color: var(--badge-blue-bg); color: var(--badge-blue-text);
+ * Status: color: var(--mensalidade-paga);
+ */
