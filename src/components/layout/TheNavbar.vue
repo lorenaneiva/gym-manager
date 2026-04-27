@@ -57,14 +57,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 0 32px;
   height: 64px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .logo {
   color: white;
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: bold;
   letter-spacing: 0.5px;
 }
@@ -84,7 +84,7 @@ a {
   text-decoration: none;
   padding: 6px 12px;
   border-radius: 6px;
-  font-size: 0.9rem;
+  font-size: 15px;
   white-space: nowrap;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
