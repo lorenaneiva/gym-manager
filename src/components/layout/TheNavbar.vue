@@ -117,7 +117,7 @@ a:hover {
     left: 0;
     width: 100%;
     background-color: #1E3A5F;
-    padding: 1rem 0;
+    padding: 16px 0;
   }
 
   .menu-aberto {
@@ -125,7 +125,7 @@ a:hover {
   }
 
   .menu li {
-    padding: 0.5rem 2rem;
+    padding: 8px 32px;
   }
 
   .mobile-navbar {
