@@ -85,6 +85,11 @@ const router = createRouter({
       name: 'agendamentos',
       component: () => import('../views/funcionario/recepcionista/VisualizarAgendamentosView.vue')
     },
+    {
+      path: '/cadastrar-agendamento',
+      name: 'cadastrar-agendamento',
+      component: () => import('../views/funcionario/recepcionista/CadastrarAgendamentoView.vue')
+    },
   ],
 })
 
