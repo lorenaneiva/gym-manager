@@ -1,53 +1,83 @@
 <script setup>
+import { useUserStore } from '@/stores/user';
+//eu usaria oimport ref aqui se não fosse usado o pinia mas como estamos usando pinia que é reativa por padrao, nao vou precisar importar aqui
+//@ aponta para a pasta src, onde tem a pasta stores e o arquivo user.js que tem os usuyarios que eu vou usar aquiu
+//devo colocar condições para mostrar os links de acordo com o tipo de usuário, se for instrutor, aluno, recepcionista ou admin
+
+const userStore = useUserStore();
+//recebe a instância da store, ou seja, quando mudar lá vai mudar aqui, ou seja, é reativo, entao quando o usuario fizer login, a navbar vai mudar automaticamente para mostrar os links de acordo com o tipo de usuário que fez login.
+//a partir daqui posso acessar os dados do arquivo e controlar o tipo de navbar que sera exibida.
+
+import {ref} from 'vue';
+//isso se refere aop menu toggle do mobile que eu ainda não implementei, mas vou deixar aqui para quando for implementar, para controlar o estado do menu, se ele está aberto ou fechado, e ai eu posso usar isso para mostrar ou esconder o menu quando clicar no botão do mobile
+const menuAberto = ref(false);
+//vai começar como falso, ou seja, o menu vai estar fechado por padrão
+
+function toggleMenu() {
+  menuAberto.value = !menuAberto.value;
+}
+//abrir menu, muda o estado para diferente do valor que inicialmente era falso.
 </script>
 
 <template>
   <nav class="navbar">
     <div class="logo">GymSync</div>
 
-    <button class="mobile-navbar">
+    <button class="mobile-navbar" @click="toggleMenu">
       <div class="risco"></div>
       <div class="risco"></div>
       <div class="risco"></div>
     </button>
 
-    <ul class="menu">
+    <ul class="menu" :class="{'menu-aberto': menuAberto}">
+      <template v-if="!userStore.isLogged">
       <!-- se não tiver logado -->
       <li><a href="">Login</a></li>
       <li><a href="">Cadastre-se</a></li>
 
+      </template>
       <!-- se for instrutor -->
-      <li><a href="">Cadastrar treinos</a></li>
-      <li><a href="">Atualizar treinos</a></li>
-      <li><a href="">Perfil</a></li>
-      <li><a href="">Sair</a></li>
-
+      <template v-else-if="userStore.isInstrutor">
+        <li><a href="">Cadastrar treinos</a></li>
+        <li><a href="">Atualizar treinos</a></li>
+        <li><a href="">Perfil</a></li>
+        <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
+        <!-- .prevent evita de recarregar a página quando clicar, e depois disso eu chamo a função da store diretamente -->
+      </template>
       <!-- se for convidado -->
+      <template v-else-if="userStore.isGuest">
       <li><a href="">Assinar Plano</a></li>
       <li><a href="">Perfil</a></li>
-      <li><a href="">Sair</a></li>
+      <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
 
+      </template>
+
+      <template v-else-if="userStore.isAluno">
       <!-- se for aluno -->
       <li><a href="">Meus treinos</a></li>
       <li><a href="">Perfil</a></li>
-      <li><a href="">Sair</a></li>
+      <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
 
+      </template>
       <!-- se for recepcionista -->
-      <li><a href="">Agendamentos</a></li>
-      <li><a href="">Cadastrar Agendamentos</a></li>
-      <li><a href="">Registrar Aluno</a></li>
-      <li><a href="">Alunos</a></li>
-      <li><a href="">Sair</a></li>
+      <template v-else-if="userStore.isRecepcionista">
+        <li><a href="">Agendamentos</a></li>
+        <li><a href="">Cadastrar Agendamentos</a></li>
+        <li><a href="">Registrar Aluno</a></li>
+        <li><a href="">Alunos</a></li>
+        <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
 
+      </template>
+      <template v-else>
       <!-- se for admin -->
       <li><a href="">Dashboard</a></li>
       <!-- onde vai relatorios, quantidade de aluno e etc etc -->
       <li><a href="">Cadastrar Plano</a></li>
       <li><a href="">Cadastrar Funcionários</a></li>
       <li><a href="">Área do Administrador</a></li>
-      <li><a href="">Sair</a></li>
+      <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
+      </template>
     </ul>
-
   </nav>
 </template>
 
