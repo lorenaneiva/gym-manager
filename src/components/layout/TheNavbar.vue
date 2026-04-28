@@ -32,49 +32,48 @@ function toggleMenu() {
     <ul class="menu" :class="{'menu-aberto': menuAberto}">
       <template v-if="!userStore.isLogged">
       <!-- se não tiver logado -->
-      <li><a href="">Login</a></li>
-      <li><a href="">Cadastre-se</a></li>
-
+        <li><RouterLink to="/login">Login</RouterLink></li>
+        <li><RouterLink to="/register">Cadastre-se</RouterLink></li>
       </template>
       <!-- se for instrutor -->
       <template v-else-if="userStore.isInstrutor">
-        <li><a href="">Cadastrar treinos</a></li>
-        <li><a href="">Atualizar treinos</a></li>
-        <li><a href="">Perfil</a></li>
+        <li><RouterLink to="/cadastrar-treino">Cadastrar treinos</RouterLink></li>
+        <li><RouterLink to="/atualizar-treino/1">Atualizar treinos</RouterLink></li>
+        <li><RouterLink to="/perfil">Perfil</RouterLink></li>
         <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
         <!-- .prevent evita de recarregar a página quando clicar, e depois disso eu chamo a função da store diretamente -->
       </template>
       <!-- se for convidado -->
       <template v-else-if="userStore.isGuest">
-      <li><a href="">Assinar Plano</a></li>
-      <li><a href="">Perfil</a></li>
+      <li><RouterLink to="/assinar-plano">Assinar Plano</RouterLink></li>
+      <li><RouterLink to="/perfil">Perfil</RouterLink></li>
       <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
 
       </template>
 
       <template v-else-if="userStore.isAluno">
       <!-- se for aluno -->
-      <li><a href="">Meus treinos</a></li>
-      <li><a href="">Perfil</a></li>
+      <li><RouterLink to="/treinos">Meus treinos</RouterLink></li>
+      <li><RouterLink to="/perfil">Perfil</RouterLink></li>
       <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
 
       </template>
       <!-- se for recepcionista -->
       <template v-else-if="userStore.isRecepcionista">
-        <li><a href="">Agendamentos</a></li>
-        <li><a href="">Cadastrar Agendamentos</a></li>
-        <li><a href="">Registrar Aluno</a></li>
-        <li><a href="">Alunos</a></li>
+        <li><RouterLink to="/agendamentos">Agendamentos</RouterLink></li>
+        <!-- <li><RouterLink to="/cadastrar-agendamento">Cadastrar Agendamentos</RouterLink></li> -->
+        <li><RouterLink to="/cadastrar-aluno">Registrar Aluno</RouterLink></li>
+        <li><RouterLink to="/alunos">Alunos</RouterLink></li>
         <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
 
       </template>
-      <template v-else>
+      <template v-else-if="userStore.isAdmin">
       <!-- se for admin -->
-      <li><a href="">Dashboard</a></li>
+      <!-- <li><RouterLink to="# ">Dashboard</RouterLink></li> -->
       <!-- onde vai relatorios, quantidade de aluno e etc etc -->
-      <li><a href="">Cadastrar Plano</a></li>
-      <li><a href="">Cadastrar Funcionários</a></li>
-      <li><a href="">Área do Administrador</a></li>
+      <li><RouterLink to="/cadastrar-plano">Cadastrar Plano</RouterLink></li>
+      <li><RouterLink to="/cadastrar-funcionario">Cadastrar Funcionários</RouterLink></li>
+      <!-- <li><RouterLink to="#">Área do Administrador</RouterLink></li> -->
       <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
       </template>
     </ul>
