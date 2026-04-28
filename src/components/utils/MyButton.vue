@@ -21,7 +21,7 @@ defineProps({
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
-  width: 5%;
+  width: 10%;
 }
 .primary { background-color: #42b983; color: white; }
 .secondary { background-color: #35495e; color: white; }

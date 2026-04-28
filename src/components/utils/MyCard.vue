@@ -12,8 +12,8 @@
 .AppCard {
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 16px;
-  margin: 8px;
+  padding: 12px;
+  margin: 4px;
 }
 
 </style>
