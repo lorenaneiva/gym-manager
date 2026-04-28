@@ -61,7 +61,7 @@ function toggleMenu() {
       <!-- se for recepcionista -->
       <template v-else-if="userStore.isRecepcionista">
         <li><RouterLink to="/agendamentos">Agendamentos</RouterLink></li>
-        <!-- <li><RouterLink to="/cadastrar-agendamento">Cadastrar Agendamentos</RouterLink></li> -->
+        <li><RouterLink to="/cadastrar-agendamento">Cadastrar Agendamentos</RouterLink></li>
         <li><RouterLink to="/cadastrar-aluno">Registrar Aluno</RouterLink></li>
         <li><RouterLink to="/alunos">Alunos</RouterLink></li>
         <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
