@@ -106,7 +106,10 @@ function toggleMenu() {
   margin: 0;
   padding: 0;
 }
-
+li a, li .router-link-active {
+  color: #93C5FD;
+  text-decoration: none;
+}
 a {
   font-family: 'Inter', sans-serif;
   color: #93C5FD;
