@@ -19,12 +19,8 @@ const dataVencimento = ref('')
 
 const atualizarRolePatch = async () => {
   try {
-    if (!userStore.user || !userStore.user.id) {
-      alert('Sessão expirada ou usuário não encontrado. Faça login novamente.');
-      return router.push('/login');
-    }
-
-    await axios.patch(`http://localhost:3000/usuarios/${userStore.user.id}`, {
+    
+    await axios.patch(`http://localhost:3000/users/${userStore.user.id}`, {
 			role: 'aluno'
   });
   userStore.setUser({ ...userStore.user, role: 'aluno'});
@@ -34,6 +30,15 @@ const atualizarRolePatch = async () => {
   } catch (error) {
     console.log('Erro ao confirmar a assinatura', error);
     alert('Ocorreu um erro ao processar o seu pagamento')
+    console.error('Erro ao confirmar a assinatura', error);
+    
+    if (error.code === 'ERR_NETWORK') {
+      alert('Erro de Conexão: O servidor (json-server) parece estar desligado.');
+    } else if (error.response && error.response.status === 404) {
+      alert(`Erro 404: O usuário com ID ${userStore.user.id} não foi encontrado no banco de dados (db.json).`);
+    } else {
+      alert('Ocorreu um erro ao processar o seu pagamento: ' + error.message);
+    }
   }
 
 }
@@ -191,7 +196,7 @@ textarea {
 
 #duplo {
   display: flex;
-  flex-direction: column; /* Mobile: empilhado */
+  flex-direction: column; 
   gap: 16px;
 }
 
