@@ -3,13 +3,40 @@ import MyButton from '@/components/utils/MyButton.vue'
 import MyCard from '@/components/utils/MyCard.vue'
 
 import { ref, computed } from 'vue'
+import axios from 'axios';
+import { useUserStore } from '@/stores/user';
 
+import { useRouter } from 'vue-router';
+
+const userStore = useUserStore();
+const router = useRouter();
 const checked = ref(false)
 const formaPagamento = ref('credito')
 const cvv = ref('')
 const referencia = ref('')
 const variasLetras = ref('')
 const dataVencimento = ref('')
+
+const atualizarRolePatch = async () => {
+  try {
+    if (!userStore.user || !userStore.user.id) {
+      alert('Sessão expirada ou usuário não encontrado. Faça login novamente.');
+      return router.push('/login');
+    }
+
+    await axios.patch(`http://localhost:3000/usuarios/${userStore.user.id}`, {
+			role: 'aluno'
+  });
+  userStore.setUser({ ...userStore.user, role: 'aluno'});
+
+  router.push('/treinos');
+
+  } catch (error) {
+    console.log('Erro ao confirmar a assinatura', error);
+    alert('Ocorreu um erro ao processar o seu pagamento')
+  }
+
+}
 
 const formatarDataVencimento = (event) => {
   let value = event.target.value;
@@ -80,7 +107,7 @@ const letrasCertas = computed(() => {
       <div id="duplo">
         <div class="inputs">
           <label>Data de Vencimento</label>
-          <input type="text" v-model="dataVencimento" @input="formatarDataVencimento" maxlength="5placeholder="placeholder="Ex: MM/AA"  />
+          <input type="text" v-model="dataVencimento" @input="formatarDataVencimento" maxlength="5" placeholder="Ex: MM/AA"  />
         </div>
 
         <div class="inputs">
@@ -92,7 +119,7 @@ const letrasCertas = computed(() => {
       </div>
 
       <div id="botoes">
-        <button type="submit" id="cadastrar">Salvar alterações</button>
+        <button type="submit" id="cadastrar" @click.prevent="atualizarRolePatch">Salvar alterações</button>
         <button id="cancelar">Cancelar</button>
       </div>
 
@@ -164,6 +191,7 @@ textarea {
 
 #duplo {
   display: flex;
+  flex-direction: column; /* Mobile: empilhado */
   gap: 16px;
 }
 
@@ -194,6 +222,7 @@ textarea {
 
 #botoes {
   display: flex;
+  flex-direction: column; /* Mobile: empilhado */
   gap: 12px;
 }
 
@@ -225,5 +254,12 @@ textarea {
   color: #1E3A8A;
   margin-bottom: 6px;
 }
-</style>
 
+/* Desktop: lado a lado */
+@media (min-width: 768px) {
+  #duplo, 
+  #botoes {
+    flex-direction: row;
+  }
+}
+</style>

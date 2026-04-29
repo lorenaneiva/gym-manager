@@ -45,7 +45,7 @@ function toggleMenu() {
       </template>
       <!-- se for convidado -->
       <template v-else-if="userStore.isGuest">
-      <li><RouterLink to="/assinar-plano">Assinar Plano</RouterLink></li>
+      <li><RouterLink to="/planos">Assinar Plano</RouterLink></li>
       <li><RouterLink to="/perfil">Perfil</RouterLink></li>
       <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
 
