@@ -4,26 +4,42 @@ defineProps({
   tipo: {
     type: String,
     default: 'primary'
+  },
+  fullWidth: {
+    type: Boolean,
+    default: false
   }
 })
 </script>
 
 <template>
-  <button :class="['btn', tipo]">
-    {{ label }}
+  <button :class="['btn', tipo, { 'full-width': fullWidth }]">
+    <slot>{{ label }}</slot>
   </button>
 </template>
 
 <style scoped>
 .btn {
-  padding: 10px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
   border: none;
-  border-radius: 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: transform 0.1s ease, background-color 0.2s;
   cursor: pointer;
-  font-weight: bold;
-  width: 10%;
+  white-space: nowrap;
 }
+
+.full-width {
+  width: 100%;
+}
+
 .primary { background-color: #42b983; color: white; }
 .secondary { background-color: #35495e; color: white; }
 .danger { background-color: #e74c3c; color: white; }
+
+button:hover { filter: brightness(0.9); }
+button:active { transform: scale(0.96); }
 </style>

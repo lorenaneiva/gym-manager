@@ -4,6 +4,12 @@ import { defineStore } from 'pinia'
 export const useUserStore = defineStore('user', () => {
   const user = ref(null)
 
+  //  const user = ref({
+  //  name: 'asddsadsa',
+  //  role: 'x' |  varia entre admin, recepcionista e instrutor pra testar.
+  // OBS: APAGUE O COMANDO ACIMA DESSE: "const user = ref (null)".
+  //})
+
   function setUser(loggedUser) {
     user.value = loggedUser
   }
