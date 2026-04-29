@@ -13,11 +13,11 @@
 
     <ul class="menu">
       <!-- se não tiver logado -->
-      <li><a href="">Login</a></li>
-      <li><a href="">Cadastre-se</a></li>
+      <li><a href="/login">Login</a></li>
+      <li><a href="/register">Cadastre-se</a></li>
 
       <!-- se for instrutor -->
-      <li><a href="">Cadastrar treinos</a></li>
+      <li><a href="/cadastrar-treinos">Cadastrar treinos</a></li>
       <li><a href="">Atualizar treinos</a></li>
       <li><a href="">Perfil</a></li>
       <li><a href="">Sair</a></li>
@@ -36,7 +36,7 @@
       <li><a href="">Agendamentos</a></li>
       <li><a href="">Cadastrar Agendamentos</a></li>
       <li><a href="">Registrar Aluno</a></li>
-      <li><a href="">Alunos</a></li>
+      <li><a href="/alunos">Alunos</a></li>
       <li><a href="">Sair</a></li>
 
       <!-- se for admin -->

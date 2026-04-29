@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "login": "admin1",
       "name": "Administrador",
       "password": "123",
@@ -9,7 +9,7 @@
       "plano": 0
     },
     {
-      "id": 2,
+      "id": "2",
       "login": "lorena",
       "name": "Lorena",
       "password": "1234",
@@ -17,7 +17,7 @@
       "plano": 0
     },
     {
-      "id": 3,
+      "id": "3",
       "login": "pedro",
       "name": "Pedro",
       "password": "12345",
@@ -25,7 +25,7 @@
       "plano": 1
     },
     {
-      "id": 4,
+      "id": "4",
       "login": "leticia",
       "name": "Leticia",
       "password": "12345",
@@ -33,17 +33,33 @@
       "plano": 1
     },
     {
-      "id": 5,
+      "id": "5",
       "login": "mariana",
       "name": "Mariana",
       "password": "12345",
       "role": "guest",
       "plano": 1
+    },
+    {
+      "name": "Bruno",
+      "login": "bruno",
+      "password": "12345",
+      "role": "aluno",
+      "plano": 0,
+      "id": "b4QK9UIkT0o"
+    },
+    {
+      "name": "Bruno",
+      "login": "bruno",
+      "password": "12345",
+      "role": "instrutor",
+      "plano": 0,
+      "id": "czTjT8mWTvI"
     }
   ],
   "planos": [
     {
-      "id": 1,
+      "id": "1",
       "nome": "Plano Mensal",
       "descricao": "Acesso livre à academia durante 30 dias.",
       "valor": 99.9,
@@ -53,7 +69,7 @@
   ],
   "mensalidades": [
     {
-      "id": 1,
+      "id": "1",
       "alunoId": 4,
       "planoId": 1,
       "valor": 99.9,
@@ -65,7 +81,7 @@
   ],
   "treinos": [
     {
-      "id": 1,
+      "id": "1",
       "alunoId": 4,
       "instrutorId": 3,
       "nome": "Treino A - Inferiores",
@@ -88,7 +104,7 @@
   ],
   "agendamentos": [
     {
-      "id": 1,
+      "id": "1",
       "alunoId": 4,
       "funcionarioId": 2,
       "tipo": "Avaliação física",
@@ -100,7 +116,7 @@
   ],
   "assinaturas": [
     {
-      "id": 1,
+      "id": "1",
       "guestId": 5,
       "planoId": 1,
       "dataSolicitacao": "2026-04-26",
@@ -109,11 +125,12 @@
   ],
   "relatorios": [
     {
-      "id": 1,
+      "id": "1",
       "titulo": "Alunos ativos",
       "descricao": "Relatório com todos os alunos ativos da academia.",
       "tipo": "alunos",
       "permitidoPara": "admin"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
