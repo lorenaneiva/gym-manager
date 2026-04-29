@@ -28,6 +28,7 @@ const router = createRouter({
     {
       path: '/assinar-plano',
       name: 'assinar-plano',
+      meta: { requiresAuth: true },
       component: () => import('../views/usuario/aluno/AssinarPlanoView.vue')
     },
     {
@@ -94,3 +95,17 @@ const router = createRouter({
 })
 
 export default router
+
+ router.beforeEach((to,from,next) => {
+    const isAuthenticated = !!localStorage.getItem('token');
+
+    if (to.meta.requiresAuth && !isAuthenticated) {
+      next('/login');
+
+    } else {
+
+      next();
+      
+    }
+
+  });
