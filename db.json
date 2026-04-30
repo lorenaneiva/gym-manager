@@ -39,6 +39,22 @@
       "password": "12345",
       "role": "guest",
       "plano": 1
+    },
+    {
+      "name": "Bruno",
+      "login": "bruno",
+      "password": "12345",
+      "role": "aluno",
+      "plano": 0,
+      "id": "b4QK9UIkT0o"
+    },
+    {
+      "name": "Bruno",
+      "login": "bruno",
+      "password": "12345",
+      "role": "instrutor",
+      "plano": 0,
+      "id": "czTjT8mWTvI"
     }
   ],
   "planos": [
