@@ -98,7 +98,7 @@ const router = createRouter({
     {
       path: '/agendamentos',
       name: 'agendamentos',
-      meta: { requiresAuth: true, roles: ['recepcionista'] },
+      meta: { requiresAuth: true, roles: ['admin','recepcionista'] },
       component: () => import('../views/funcionario/recepcionista/VisualizarAgendamentosView.vue')
     },
     {
