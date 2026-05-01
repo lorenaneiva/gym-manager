@@ -6,10 +6,11 @@ import { ref, computed } from 'vue'
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
 
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 const userStore = useUserStore();
 const router = useRouter();
+const route = useRoute();
 const checked = ref(false)
 const formaPagamento = ref('credito')
 const cvv = ref('')
@@ -19,11 +20,14 @@ const dataVencimento = ref('')
 
 const atualizarRolePatch = async () => {
   try {
-    
+    const planoId = route.params.id; // Pegando o ID do plano selecionado na URL
+
     await axios.patch(`http://localhost:3000/users/${userStore.user.id}`, {
-			role: 'aluno'
+			role: 'aluno',
+      planoId: planoId,
+      ativo: true // Ativa a assinatura do usuário
   });
-  userStore.setUser({ ...userStore.user, role: 'aluno'});
+  userStore.setUser({ ...userStore.user, role: 'aluno', planoId, ativo: true});
 
   router.push('/treinos');
 

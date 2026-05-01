@@ -105,7 +105,7 @@ const router = createRouter({
     {
       path: '/alunos',
       name: 'alunos',
-      meta: { requiresAuth: true, roles: ['recepcionista'] },
+      meta: { requiresAuth: true, roles: ['recepcionista', 'admin'] },
       component: () => import('../views/funcionario/recepcionista/Alunos.vue')
     },
     {
