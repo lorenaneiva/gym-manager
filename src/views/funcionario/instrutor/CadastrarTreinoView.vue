@@ -6,16 +6,15 @@ import axios from 'axios';
 const route = useRoute();
 
 const alunoId = ref('');
-const alunos = ref([]); // Array para guardar os alunos que virão da API
+const alunos = ref([]); 
 
-// Variáveis reativas para o formulário
 const nomeTreino = ref('');
 const objetivo = ref('');
 const exercicios = ref([
-  { nome: '', series: '', repeticoes: '' } // Começa com 1 exercício vazio por padrão
+  { nome: '', series: '', repeticoes: '' } 
 ]);
 
-const erros = ref({}); // Objeto para guardar as mensagens de erro
+const erros = ref({}); 
 
 const buscarAlunos = async () => {
   try {
@@ -35,7 +34,7 @@ const removerExercicio = (index) => {
   exercicios.value.splice(index, 1);
 };
 
-const validarESalvar = () => {
+const validarESalvar = async () => {
   erros.value = {}; // Limpa os erros anteriores
 
   if (!alunoId.value) erros.value.aluno = 'Por favor, selecione um aluno.';
@@ -53,11 +52,24 @@ const validarESalvar = () => {
 
   // Se o objeto de erros continuar vazio, significa que passou na validação
   if (Object.keys(erros.value).length === 0) {
-    alert('Treino validado com sucesso! Pronto para ser enviado para a API.');
-    console.log('Dados a serem salvos:', {
-      alunoId: alunoId.value, nomeTreino: nomeTreino.value, objetivo: objetivo.value, exercicios: exercicios.value
-    });
-    // Aqui entrará o axios.post futuramente
+    try {
+      await axios.post('http://localhost:3000/treinos', {
+        alunoId: alunoId.value,
+        nome: nomeTreino.value,
+        objetivo: objetivo.value,
+        exercicios: exercicios.value,
+        ativo: true
+      });
+      alert('Treino cadastrado com sucesso!');
+      // Limpa os dados do formulário
+      alunoId.value = '';
+      nomeTreino.value = '';
+      objetivo.value = '';
+      exercicios.value = [{ nome: '', series: '', repeticoes: '' }];
+    } catch (error) {
+      console.error('Erro ao salvar treino:', error);
+      alert('Ocorreu um erro ao salvar o treino. Tente novamente.');
+    }
   }
 };
 
