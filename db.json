@@ -112,6 +112,28 @@
       "hora": "10:30",
       "status": "agendado",
       "observacao": "Primeira avaliação da aluna."
+    },
+    {
+      "alunoId": "b4QK9UIkT0o",
+      "funcionarioId": "1",
+      "tipo": "Avaliação fisica",
+      "data": "2026-05-01",
+      "hora": "22:33",
+      "status": "agendado",
+      "observacao": "Segunda Avaliação do alunos",
+      "dataCriacao": "2026-05-01",
+      "id": "UerKH-adqaw"
+    },
+    {
+      "alunoId": "b4QK9UIkT0o",
+      "funcionarioId": "1",
+      "tipo": "treinos",
+      "data": "2026-05-07",
+      "hora": "22:04",
+      "status": "agendado",
+      "observacao": "",
+      "dataCriacao": "2026-05-01",
+      "id": "RXy29ggczAg"
     }
   ],
   "assinaturas": [

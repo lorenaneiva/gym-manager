@@ -41,7 +41,7 @@ const router = createRouter({
       name: 'assinar-plano',
       meta: { requiresAuth: true, roles: ['guest'] },
       component: () => import('../views/usuario/aluno/AssinarPlanoView.vue')
-    
+
     },
     {
       path: '/treinos',

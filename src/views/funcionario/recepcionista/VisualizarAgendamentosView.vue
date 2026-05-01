@@ -1,20 +1,49 @@
 <script setup>
-import { onMounted, ref, computed} from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { api } from '@/services/api.js'
 import CadastrarAgendamento from '@/components/funcionario/recepcionista/CadastrarAgendamento.vue'
 
 const agendamentos = ref([])
 const alunos = ref([])
 const editando = ref(null)
-
 const loading = ref(false)
-const error = ref(null)
+const filtroNome = ref('')
+const salvandoId = ref(null)
+const feedback = ref({ message: '', type: '' })
 
-const agendamentosOrdenados = computed(() => {
-  return [...agendamentos.value].sort((a, b) => {
-    return new Date(a.data) - new Date(b.data)
+const showFeedback = (msg, type = 'success') => {
+  feedback.value = { message: msg, type }
+  setTimeout(() => { feedback.value = { message: '', type: '' } }, 3000)
+}
+
+const fetchData = async () => {
+  try {
+    loading.value = true
+    const [agRes, usersRes] = await Promise.all([
+      api.get('/agendamentos'),
+      api.get('/users')
+    ])
+    agendamentos.value = agRes.data
+    alunos.value = usersRes.data.filter(u => u.role?.toLowerCase() === 'aluno')
+  } catch (err) {
+    showFeedback('Erro ao carregar dados', 'error')
+  } finally {
+    setTimeout(() => { loading.value = false }, 500)
+  }
+}
+
+const agendamentosFiltrados = computed(() => {
+  const lista = agendamentos.value.filter(a => {
+    const nome = getNomeAluno(a.alunoId).toLowerCase()
+    return nome.includes(filtroNome.value.toLowerCase())
   })
+  return lista.sort((a, b) => new Date(a.data) - new Date(b.data))
 })
+
+const isHoje = (data) => {
+  const hoje = new Date().toISOString().split('T')[0]
+  return data === hoje
+}
 
 const formatarData = (data) => {
   if (!data) return ''
@@ -22,61 +51,35 @@ const formatarData = (data) => {
   return `${dia}/${mes}/${ano}`
 }
 
-const fetchData = async () => {
-  try {
-    loading.value = true
-    error.value = null
-
-    const [agRes, usersRes] = await Promise.all([
-      api.get('/agendamentos'),
-      api.get('/users')
-    ])
-
-    agendamentos.value = agRes.data
-
-    alunos.value = usersRes.data.filter(u => u.role?.toLowerCase() === 'aluno')
-
-    console.log('Alunos carregados com sucesso:', alunos.value.length)
-
-  } catch (err) {
-    console.error('Erro ao buscar dados:', err)
-    error.value = 'Erro ao carregar dados'
-  } finally {
-    loading.value = false
-  }
-}
-
 const getNomeAluno = (id) => {
-  if (!alunos.value.length) return 'Carregando...'
-
   const aluno = alunos.value.find(a => String(a.id) === String(id))
-
-  return aluno ? aluno.name : 'Aluno não encontrado'
+  return aluno ? aluno.name : 'Desconhecido'
 }
-
 
 const deletar = async (id) => {
-  if (!confirm('Deseja excluir este agendamento?')) return
-
+  if (!confirm('Deseja excluir?')) return
   try {
     await api.delete(`/agendamentos/${id}`)
+    showFeedback('Excluído com sucesso!')
     await fetchData()
   } catch {
-    alert('Erro ao excluir')
+    showFeedback('Erro ao excluir', 'error')
   }
 }
 
-const iniciarEdicao = (ag) => {
-  editando.value = { ...ag }
-}
+const iniciarEdicao = (ag) => { editando.value = { ...ag } }
 
 const salvarEdicao = async () => {
   try {
+    salvandoId.value = editando.value.id
     await api.put(`/agendamentos/${editando.value.id}`, editando.value)
+    showFeedback('Alterações salvas!')
     editando.value = null
     await fetchData()
   } catch {
-    alert('Erro ao salvar')
+    showFeedback('Erro ao salvar', 'error')
+  } finally {
+    salvandoId.value = null
   }
 }
 
@@ -85,189 +88,261 @@ onMounted(fetchData)
 
 <template>
   <div class="view-container">
+    <Transition name="toast">
+      <div v-if="feedback.message" :class="['toast-notification', feedback.type]">
+        {{ feedback.message }}
+      </div>
+    </Transition>
+
     <header class="page-header">
-      <h1 class="title">Agendamentos</h1>
+      <h1 class="title">Gestão de Agendamentos</h1>
     </header>
 
     <CadastrarAgendamento @created="fetchData" />
 
-    <div class="table-card">
-      <table class="modern-table">
-        <thead>
-          <tr>
-            <th>ALUNO</th>
-            <th>TIPO</th>
-            <th>DATA</th>
-            <th>HORA</th>
-            <th>OBSERVAÇÃO</th>
-            <th>AÇÕES</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="a in agendamentosOrdenados" :key="a.id">
-            <td class="font-bold">{{ getNomeAluno(a.alunoId) }}</td>
+    <div class="content-wrapper">
+      <div class="toolbar">
+        <div class="search-box">
+          <div class="search-icon-wrapper">🔍</div>
+          <input
+            v-model="filtroNome"
+            placeholder="Buscar por nome do aluno..."
+            class="search-input"
+          />
+        </div>
+      </div>
 
-            <!-- Coluna Tipo -->
-            <td>
-              <input v-if="editando?.id === a.id" v-model="editando.tipo" class="edit-input" />
-              <span v-else class="badge-tipo">{{ a.tipo }}</span>
-            </td>
+      <div class="table-card shadow-soft">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>ALUNO</th>
+              <th>TIPO</th>
+              <th>DATA</th>
+              <th>HORA</th>
+              <th>OBSERVAÇÃO</th>
+              <th>AÇÕES</th>
+            </tr>
+          </thead>
 
-            <!-- Coluna Data -->
-            <td>
-              <input v-if="editando?.id === a.id" type="date" v-model="editando.data" class="edit-input" />
-              <span v-else>{{ formatarData(a.data) }}</span>
-            </td>
+          <tbody v-if="loading">
+            <tr v-for="n in 5" :key="'sk' + n" class="skeleton-row">
+              <td v-for="i in 6" :key="i"><div></div></td>
+            </tr>
+          </tbody>
 
-            <!-- Coluna Hora -->
-            <td>
-              <input v-if="editando?.id === a.id" type="time" v-model="editando.hora" class="edit-input" />
-              <span v-else>{{ a.hora }}</span>
-            </td>
+          <tbody v-else>
+            <tr
+              v-for="a in agendamentosFiltrados"
+              :key="a.id"
+              :class="{ 'linha-hoje': isHoje(a.data) }"
+            >
+              <td data-label="ALUNO" class="col-aluno-destaque">
+                <div class="cell-center">
+                  <span v-if="isHoje(a.data)" class="hoje-tag">HOJE</span>
+                  {{ getNomeAluno(a.alunoId) }}
+                </div>
+              </td>
 
-            <!-- Coluna Observação -->
-            <td>
-              <input v-if="editando?.id === a.id" v-model="editando.observacao" class="edit-input" />
-              <span v-else class="obs-cell">{{ a.observacao || '-' }}</span>
-            </td>
+              <td data-label="TIPO">
+                <div class="cell-center">
+                  <input v-if="editando?.id === a.id" v-model="editando.tipo" class="edit-input" />
+                  <span v-else class="badge-tipo-glass">{{ a.tipo }}</span>
+                </div>
+              </td>
 
-            <!-- Coluna Ações -->
-            <td class="actions">
-              <div v-if="editando?.id === a.id">
-                <button @click="salvarEdicao" class="btn-save">Salvar</button>
-                <button @click="editando = null" class="btn-cancel">Cancelar</button>
-              </div>
-              <div v-else>
-                <button @click="iniciarEdicao(a)" class="btn-edit">Editar</button>
-                <button @click="deletar(a.id)" class="btn-icon-danger">Excluir</button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              <td data-label="DATA">
+                <div class="cell-center">
+                  <input v-if="editando?.id === a.id" type="date" v-model="editando.data" class="edit-input" />
+                  <span v-else>{{ formatarData(a.data) }}</span>
+                </div>
+              </td>
+
+              <td data-label="HORA">
+                <div class="cell-center text-time">
+                  <input v-if="editando?.id === a.id" type="time" v-model="editando.hora" class="edit-input" />
+                  <span v-else>{{ a.hora }}</span>
+                </div>
+              </td>
+
+              <td data-label="OBSERVAÇÃO" class="col-obs-muted">
+                <div class="cell-center">
+                  <input v-if="editando?.id === a.id" v-model="editando.observacao" class="edit-input" />
+                  <span v-else>{{ a.observacao || '-' }}</span>
+                </div>
+              </td>
+
+              <td data-label="AÇÕES" class="actions">
+                <div class="cell-center">
+                  <div v-if="editando?.id === a.id" class="edit-buttons-group">
+                    <button @click="salvarEdicao" class="btn-save-grad" :disabled="salvandoId === a.id">
+                      {{ salvandoId === a.id ? '...' : 'Salvar' }}
+                    </button>
+                    <button @click="editando = null" class="btn-cancel-link">Cancelar</button>
+                  </div>
+                  <div v-else class="action-buttons-group">
+                    <button @click="iniciarEdicao(a)" class="btn-action edit">Editar</button>
+                    <button @click="deletar(a.id)" class="btn-action delete">Excluir</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <tr v-if="agendamentosFiltrados.length === 0">
+              <td colspan="6" class="empty-state">
+                Nenhum agendamento encontrado para "{{ filtroNome }}"
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* 1. FUNDO E ESTRUTURA */
 .view-container {
-  background-color: var(--neutral-50);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   min-height: 100vh;
-  padding: 0;
 }
 
 .page-header {
-  padding: 20px;
+  padding: 25px 40px;
   background: white;
-  border-bottom: 1px solid var(--neutral-200);
-}
-
-.title {
-  color: var(--neutral-900);
-  font-size: 1.5rem;
-  margin: 0;
-}
-
-.table-card {
-  margin: 20px;
-  background: white;
-  border-radius: 12px;
-  border: 1px solid var(--neutral-200);
-  box-shadow: var(--card-shadow);
-  overflow: hidden;
-}
-
-.modern-table {
-  width: 100%;
-  border-collapse: collapse;
+  border-bottom: 1px solid #e2e8f0;
   text-align: left;
 }
 
+.title { font-size: 1.6rem; color: #1e293b; font-weight: 800; }
+
+.content-wrapper { padding: 20px; max-width: 1200px; margin: 0 auto; }
+
+/* 2. TABELA E CENTRALIZAÇÃO */
+.shadow-soft { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+
+.table-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.modern-table { width: 100%; border-collapse: collapse; }
+
 .modern-table th {
-  background-color: var(--neutral-50);
-  color: var(--neutral-600);
-  padding: 15px;
+  background: linear-gradient(to bottom, #ffffff, #f8fafc);
+  border-bottom: 2px solid #f1f5f9;
+  text-align: center;
+  padding: 18px;
+  color: #64748b;
   font-size: 0.75rem;
-  text-transform: uppercase;
+  font-weight: 700;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--neutral-200);
 }
 
-.modern-table td {
-  padding: 15px;
-  border-bottom: 1px solid var(--neutral-100);
-  color: var(--neutral-700);
-  font-size: 0.9rem;
-}
-
-.font-bold {
-  font-weight: 600;
-  color: var(--neutral-900);
-}
-
-.badge-tipo {
-  background-color: var(--primary-100);
-  color: var(--primary-800);
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-}
-
-.obs-cell {
-  max-width: 250px;
-  color: var(--neutral-500);
-  font-style: italic;
-}
-
-.btn-icon-danger {
-  color: var(--danger-600);
-  background: none;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-icon-danger:hover {
-  color: var(--danger-800);
-  text-decoration: underline;
-}
-
-.actions {
+.cell-center {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  min-height: 45px;
 }
 
-.btn-edit {
-  color: var(--primary-600);
-  background: none;
-  border: none;
+/* 3. DESIGN DOS DADOS */
+.col-aluno-destaque { color: #1e293b; font-weight: 700; }
+.col-obs-muted { color: #94a3b8; font-size: 0.85rem; font-style: italic; }
+.text-time { color: #475569; font-weight: 600; }
+
+.badge-tipo-glass {
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+  padding: 4px 14px;
+  border-radius: 99px;
+  font-size: 0.75rem;
   font-weight: 600;
-  cursor: pointer;
 }
 
-.btn-save {
-  background-color: var(--success-100);
-  color: var(--success-700);
-  border: 1px solid var(--success-200);
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-cancel {
-  background: none;
-  border: none;
-  color: var(--neutral-500);
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.edit-input {
-  width: 100%;
-  padding: 6px;
-  border: 1px solid var(--primary-200);
+.hoje-tag {
+  background: #2563eb;
+  color: white;
+  font-size: 0.6rem;
+  padding: 2px 6px;
   border-radius: 4px;
-  background-color: var(--primary-50);
+}
+
+/* 4. BUSCA E LUPA */
+.toolbar { margin-bottom: 30px; display: flex; justify-content: center; }
+.search-box { position: relative; width: 100%; max-width: 500px; display: flex; align-items: center; }
+.search-icon-wrapper {
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  height: 100%;
+}
+.search-input {
+  width: 100%;
+  padding: 14px 15px 14px 48px;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  outline: none;
+  text-align: center;
+}
+
+/* 5. RESPONSIVIDADE (CARDS) */
+@media (max-width: 768px) {
+  .modern-table thead { display: none; } /* Esconde o topo da tabela */
+
+  .modern-table tr {
+    display: block;
+    border-bottom: 8px solid #f1f5f9; /* Espaço entre os cards */
+    padding: 15px 0;
+  }
+
+  .modern-table td {
+    display: block;
+    text-align: center;
+    padding: 10px 15px;
+    border: none;
+  }
+
+  .modern-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #94a3b8;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .cell-center {
+    justify-content: center; /* Mantém as informações no centro do card */
+    min-height: auto;
+  }
+
+  .hoje-tag { display: inline-block; margin-bottom: 5px; }
+
+  .table-card { border: none; background: transparent; box-shadow: none; }
+  .modern-table tr { background: white; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+}
+
+/* BOTÕES E OUTROS */
+.btn-action { background: none; border: none; font-weight: 700; cursor: pointer; }
+.btn-action.edit { color: #2563eb; margin-right: 10px;}
+.btn-action.delete { color: #ef4444; }
+
+.btn-save-grad {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600;
+}
+
+.toast-notification {
+  position: fixed; top: 25px; right: 25px; padding: 14px 28px;
+  border-radius: 12px; background: #1e293b; color: white; z-index: 1000;
 }
 </style>
