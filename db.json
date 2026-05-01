@@ -100,6 +100,36 @@
           "repeticoes": "12"
         }
       ]
+    },
+    {
+      "alunoId": "b4QK9UIkT0o",
+      "nome": "123",
+      "objetivo": "123",
+      "exercicios": [
+        {
+          "nome": "132",
+          "series": 123,
+          "repeticoes": "123"
+        }
+      ],
+      "ativo": true,
+      "id": "rHs-5TMMfqI"
+    },
+    {
+      "alunoId": "b4QK9UIkT0o",
+      "instrutorId": "3",
+      "nome": "123",
+      "objetivo": "123",
+      "dataCriacao": "2026-05-01",
+      "exercicios": [
+        {
+          "nome": "123",
+          "series": 123,
+          "repeticoes": "123"
+        }
+      ],
+      "ativo": true,
+      "id": "fdXnIuQEmeQ"
     }
   ],
   "agendamentos": [
