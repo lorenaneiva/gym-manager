@@ -3,6 +3,10 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
+defineOptions({
+  name: 'AlunosView'
+});
+
 const router = useRouter();
 
 const usuarios = ref([]);

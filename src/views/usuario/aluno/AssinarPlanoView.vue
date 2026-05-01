@@ -1,7 +1,4 @@
 <script setup>
-import MyButton from '@/components/utils/MyButton.vue'
-import MyCard from '@/components/utils/MyCard.vue'
-
 import { ref, computed } from 'vue'
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
@@ -11,7 +8,6 @@ import { useRouter, useRoute } from 'vue-router';
 const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
-const checked = ref(false)
 const formaPagamento = ref('credito')
 const cvv = ref('')
 const referencia = ref('')
