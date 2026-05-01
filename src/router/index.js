@@ -117,8 +117,8 @@ const router = createRouter({
     {
       path: '/cadastrar-agendamento',
       name: 'cadastrar-agendamento',
-      meta: { requiresAuth: true, roles: ['recepcionista'] },
-      component: () => import('../views/funcionario/recepcionista/CadastrarAgendamentoView.vue')
+      meta: { requiresAuth: true, roles: ['recepcionista', 'admin'] },
+      component: () => import('../components/funcionario/recepcionista/CadastrarAgendamento.vue')
     },
     {
       path: '/acesso-negado',
