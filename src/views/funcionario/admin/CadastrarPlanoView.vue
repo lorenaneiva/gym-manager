@@ -38,7 +38,8 @@ async function cadastrarPlano() {
     })
     sucesso.value = true
     erro.value = false
-  } catch (erro) {
+  } catch (error) {
+    console.error('Erro ao cadastrar plano:', error)
     erro.value = true
     sucesso.value = false
   }

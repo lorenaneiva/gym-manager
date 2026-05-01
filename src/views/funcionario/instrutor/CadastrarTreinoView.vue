@@ -2,19 +2,21 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import { useUserStore } from '@/stores/user';
 
 const route = useRoute();
+const userStore = useUserStore();
 
 const alunoId = ref('');
-const alunos = ref([]); 
+const alunos = ref([]);
 
 const nomeTreino = ref('');
 const objetivo = ref('');
 const exercicios = ref([
-  { nome: '', series: '', repeticoes: '' } 
+  { nome: '', series: '', repeticoes: '' }
 ]);
 
-const erros = ref({}); 
+const erros = ref({});
 
 const buscarAlunos = async () => {
   try {
@@ -40,7 +42,7 @@ const validarESalvar = async () => {
   if (!alunoId.value) erros.value.aluno = 'Por favor, selecione um aluno.';
   if (!nomeTreino.value.trim()) erros.value.nomeTreino = 'O nome do treino é obrigatório.';
   if (!objetivo.value.trim()) erros.value.objetivo = 'O objetivo do treino é obrigatório.';
-  
+
   if (exercicios.value.length === 0) {
     erros.value.exerciciosGeral = 'Adicione pelo menos um exercício ao treino.';
   } else {
@@ -55,8 +57,10 @@ const validarESalvar = async () => {
     try {
       await axios.post('http://localhost:3000/treinos', {
         alunoId: alunoId.value,
+        instrutorId: userStore.user?.id,
         nome: nomeTreino.value,
         objetivo: objetivo.value,
+        dataCriacao: new Date().toISOString().slice(0, 10),
         exercicios: exercicios.value,
         ativo: true
       });
@@ -75,7 +79,7 @@ const validarESalvar = async () => {
 
 onMounted(() => {
   alunoId.value = route.params.id || '';
-  buscarAlunos(); 
+  buscarAlunos();
 });
 </script>
 
@@ -336,11 +340,11 @@ textarea {
   .exercicio-inputs {
     flex-direction: row;
   }
-  
+
   .flex-2 {
     flex: 2;
   }
-  
+
   .flex-1 {
     flex: 1;
   }

@@ -16,7 +16,7 @@ const buscarDados = async () => {
       axios.get('http://localhost:3000/treinos'),
       axios.get('http://localhost:3000/users?role=aluno')
     ]);
-    
+
     treinos.value = resTreinos.data;
     alunos.value = resAlunos.data;
   } catch (err) {
@@ -29,7 +29,7 @@ const buscarDados = async () => {
 
 // Função auxiliar para pegar o nome do aluno baseado no alunoId salvo no treino
 const getNomeAluno = (id) => {
-  const aluno = alunos.value.find(a => a.id === id);
+  const aluno = alunos.value.find(a => String(a.id) === String(id));
   return aluno ? aluno.name : 'Aluno não encontrado';
 };
 
@@ -68,11 +68,11 @@ onMounted(() => {
     <div v-if="carregando" class="msg-estado carregando">
       Carregando lista de treinos...
     </div>
-    
+
     <div v-else-if="erro" class="msg-estado erro">
       {{ erro }}
     </div>
-    
+
     <div v-else-if="treinos.length === 0" class="msg-estado vazio">
       Não há nenhum treino cadastrado no momento.
     </div>
@@ -91,7 +91,7 @@ onMounted(() => {
           <p class="treino-objetivo">{{ treino.objetivo }}</p>
           <p class="qtd-exercicios">{{ treino.exercicios?.length || 0 }} exercício(s) cadastrado(s)</p>
         </div>
-        
+
         <div class="treino-acoes">
           <button class="btn-editar" @click="editarTreino(treino.id)">Editar</button>
           <button class="btn-excluir" @click="excluirTreino(treino.id)">Excluir</button>
