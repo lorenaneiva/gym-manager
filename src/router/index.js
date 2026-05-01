@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import { useUserStore } from '@/stores/user'
 import { pinia } from '@/stores/pinia'
 
@@ -41,7 +40,6 @@ const router = createRouter({
       name: 'assinar-plano',
       meta: { requiresAuth: true, roles: ['guest'] },
       component: () => import('../views/usuario/aluno/AssinarPlanoView.vue')
-    
     },
     {
       path: '/treinos',
