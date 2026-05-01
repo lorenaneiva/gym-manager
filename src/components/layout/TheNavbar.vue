@@ -38,11 +38,12 @@ function toggleMenu() {
       <!-- se for instrutor -->
       <template v-else-if="userStore.isInstrutor">
         <li><RouterLink to="/cadastrar-treino">Cadastrar treinos</RouterLink></li>
-        <li><RouterLink to="/atualizar-treino/1">Atualizar treinos</RouterLink></li>
+        <li><RouterLink to="/listar-treinos">Gerenciar treinos</RouterLink></li>
         <li><RouterLink to="/perfil">Perfil</RouterLink></li>
         <li><a href="#" @click.prevent="userStore.logout()">Sair</a></li>
         <!-- .prevent evita de recarregar a página quando clicar, e depois disso eu chamo a função da store diretamente -->
       </template>
+
       <!-- se for convidado -->
       <template v-else-if="userStore.isGuest">
       <li><RouterLink to="/planos">Assinar Plano</RouterLink></li>
@@ -59,6 +60,7 @@ function toggleMenu() {
 
       </template>
       <!-- se for recepcionista -->
+
       <template v-else-if="userStore.isRecepcionista">
         <li><RouterLink to="/agendamentos">Agendamentos</RouterLink></li>
         <li><RouterLink to="/cadastrar-agendamento">Cadastrar Agendamentos</RouterLink></li>
