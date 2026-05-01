@@ -1,62 +1,32 @@
 <template>
-  <div class="home">
-    <h1>Planos disponíveis</h1>
+  <main class="home">
+    <section class="container">
+      <h1>Bem-vindo à Academia</h1>
 
-    <div class="planos">
-      <PlanoCard
-        v-for="plano in planos"
-        :key="plano.id"
-        :id="plano.id"
-        :nome="plano.nome"
-        :descricao="plano.descricao"
-        :valor="plano.valor"
-        :imagem="imagemPadrao"
-        @assinar="assinarPlano"
-      />
-    </div>
-  </div>
+      <h2>Planos:</h2>
+
+      <div class="planos">
+        <PlanoCard
+          v-for="plano in planos"
+          :key="plano.id"
+          :id="plano.id"
+          :nome="plano.nome"
+          :descricao="plano.descricao"
+          :valor="plano.valor"
+          :imagem="imagemPadrao"
+          @assinar="assinarPlano"
+        />
+      </div>
+    </section>
+  </main>
 </template>
 
 <script setup>
-<<<<<<< Updated upstream
-import { useUserStore } from '@/stores/user'
-import ConteudoInstrutor from '@/components/funcionario/instrutor/ConteudoHomeInstrutor.vue'
-import ConteudoAdm from '@/components/funcionario/admin/ConteudoHomeAdmin.vue'
-import ConteudoRecep from '@/components/funcionario/recepcionista/ConteudoHomeRecepcionista.vue'
-
-const userStore = useUserStore()
-</script>
-
-<template>
-  <div class="home-wrapper">
-    <header class="header-sessao">
-      <h1>Painel do Funcionário</h1>
-      <p>Sua role: <strong>{{ userStore.user?.role }}</strong></p>
-    </header>
-
-    <main class="conteudo-principal">
-      <ConteudoAdm v-if="userStore.isAdmin" />
-      <ConteudoRecep v-else-if="userStore.isRecepcionista" />
-      <ConteudoInstrutor v-else-if="userStore.isInstrutor" />
-
-      <div v-else class="alerta">
-        Aguardando definição de cargo...
-      </div>
-    </main>
-  </div>
-</template>
-
-<style scoped>
-.home-wrapper { padding: 20px; }
-.header-sessao { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-.conteudo-principal { min-height: 60vh; }
-</style>
-=======
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import PlanoCard from '@/components/PlanoCard.vue'
-import { API_URL } from '../../api'
-import { useUserStore } from '../stores/user'
+import { API_URL } from '@/api'
+import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 
 const planos = ref([])
@@ -84,13 +54,57 @@ onMounted(() => {
 
 <style scoped>
 .home {
-  padding: 20px;
+  min-height: 100vh;
+  background: #f4f7f5;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 1150px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: 22px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 35px;
+  color: #1f1f1f;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 24px;
+  color: #222;
 }
 
 .planos {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  justify-items: center;
+  gap: 28px;
+}
+
+@media (max-width: 600px) {
+  .home {
+    padding: 20px 12px;
+  }
+
+  .container {
+    padding: 24px 16px;
+  }
+
+  h1 {
+    font-size: 28px;
+    text-align: left;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
 }
 </style>
 >>>>>>> Stashed changes
