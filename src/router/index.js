@@ -33,13 +33,13 @@ const router = createRouter({
     {
       path: '/planos',
       name: 'planos',
-      meta: { requiresAuth: true, roles: ['guest'] },
+      meta: { requiresAuth: false, roles: ['guest'] },
       component: () => import('../views/usuario/guest/EscolherPlanoView.vue')
     },
     {
       path: '/assinar-plano/:id',
       name: 'assinar-plano',
-      meta: { requiresAuth: true, roles: ['guest'] },
+      meta: { requiresAuth: true, roles: ['aluno'] },
       component: () => import('../views/usuario/aluno/AssinarPlanoView.vue')
     
     },
@@ -76,6 +76,12 @@ const router = createRouter({
       name: 'cadastrar-treino',
       meta: { requiresAuth: true, roles: ['instrutor'] },
       component: () => import('../views/funcionario/instrutor/CadastrarTreinoView.vue')
+    },
+    {
+      path: '/listar-treinos',
+      name: 'listar-treinos',
+      meta: { requiresAuth: true, roles: ['instrutor'] },
+      component: () => import('../views/funcionario/instrutor/ListarTreinosView.vue')
     },
     {
       path: '/atualizar-treino/:id',
