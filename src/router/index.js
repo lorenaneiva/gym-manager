@@ -30,7 +30,7 @@ const router = createRouter({
       component: () => import('../views/usuario/aluno/PerfilView.vue')
     },
     {
-      path: '/planos',
+      path: '/',
       name: 'planos',
       meta: { requiresAuth: false, roles: ['guest'] },
       component: () => import('../views/usuario/guest/EscolherPlanoView.vue')
@@ -38,7 +38,7 @@ const router = createRouter({
     {
       path: '/assinar-plano/:id',
       name: 'assinar-plano',
-      meta: { requiresAuth: true, roles: ['aluno'] },
+      meta: { requiresAuth: true, roles: ['aluno', 'guest'] },
       component: () => import('../views/usuario/aluno/AssinarPlanoView.vue')
     },
     {

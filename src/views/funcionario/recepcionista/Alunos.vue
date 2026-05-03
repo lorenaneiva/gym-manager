@@ -25,7 +25,7 @@ const buscarDados = async () => {
       axios.get('http://localhost:3000/users'),
       axios.get('http://localhost:3000/planos')
     ]);
-    
+
     usuarios.value = resUsuarios.data;
     planos.value = resPlanos.data;
   } catch (err) {
@@ -37,17 +37,25 @@ const buscarDados = async () => {
 };
 
 // Helper para pegar o nome do plano
-const getNomePlano = (planoId) => {
-  if (!planoId) return 'Sem plano ativo';
-  const plano = planos.value.find(p => p.id === planoId);
-  return plano ? plano.nome : 'Plano não encontrado';
+const getPlanoIdDoAluno = (aluno) => {
+  return aluno.planoId || aluno.plano_id || aluno.plano || aluno.planId || null;
 };
+
+const getNomePlano = (aluno) => {
+  const planoId = getPlanoIdDoAluno(aluno);
+
+  if (!planoId) return 'Sem plano ativo';
+
+  const plano = planos.value.find(p => String(p.id) === String(planoId));
+
+  return plano ? plano.nome : 'Plano não encontrado';
+};''
 
 // Computed Properties para separar e filtrar as listas
 const alunosFiltrados = computed(() => {
   const alunos = usuarios.value.filter(u => u.role === 'aluno');
   if (!buscaAluno.value) return alunos;
-  
+
   const termo = buscaAluno.value.toLowerCase();
   return alunos.filter(a => a.name.toLowerCase().includes(termo));
 });
@@ -56,7 +64,7 @@ const usuariosFiltrados = computed(() => {
   // Aqui filtramos quem NÃO É aluno, admin, instrutor ou recepcionista (geralmente 'guest')
   const guests = usuarios.value.filter(u => u.role === 'guest' || !u.role);
   if (!buscaUsuario.value) return guests;
-  
+
   const termo = buscaUsuario.value.toLowerCase();
   return guests.filter(u => u.name.toLowerCase().includes(termo));
 });
@@ -88,22 +96,22 @@ onMounted(() => {
     <div v-if="carregando" class="msg-estado carregando">
       Carregando dados do sistema...
     </div>
-    
+
     <div v-else-if="erro" class="msg-estado erro">
       {{ erro }}
     </div>
 
     <div v-else class="conteudo-tabelas">
-      
+
       <!-- TABELA DE ALUNOS -->
       <section class="tabela-section">
         <div class="section-header">
           <h4>Alunos Matriculados ({{ alunosFiltrados.length }})</h4>
           <div class="busca-container">
-            <input 
-              type="text" 
-              v-model="buscaAluno" 
-              placeholder="Buscar aluno por nome..." 
+            <input
+              type="text"
+              v-model="buscaAluno"
+              placeholder="Buscar aluno por nome..."
               class="input-busca"
             />
           </div>
@@ -125,7 +133,12 @@ onMounted(() => {
               <tr v-for="aluno in alunosFiltrados" :key="aluno.id">
                 <td class="col-nome">{{ aluno.name }}</td>
                 <td>
-                  <span class="plano-badge">{{ getNomePlano(aluno.planoId) }}</span>
+                  <span
+                    class="plano-badge"
+                    :class="{ ativo: getPlanoIdDoAluno(aluno), semPlano: !getPlanoIdDoAluno(aluno) }"
+                  >
+                    {{ getNomePlano(aluno) }}
+                  </span>
                 </td>
                 <td class="col-acao">
                   <button class="btn-agendar" @click="irParaAgendamento(aluno.id)">
@@ -143,10 +156,10 @@ onMounted(() => {
         <div class="section-header">
           <h4>Usuários / Visitantes ({{ usuariosFiltrados.length }})</h4>
           <div class="busca-container">
-            <input 
-              type="text" 
-              v-model="buscaUsuario" 
-              placeholder="Buscar usuário por nome..." 
+            <input
+              type="text"
+              v-model="buscaUsuario"
+              placeholder="Buscar usuário por nome..."
               class="input-busca"
             />
           </div>
@@ -284,8 +297,22 @@ h3 {
 
 .empty-state { text-align: center !important; color: #64748B; font-style: italic; padding: 24px !important; }
 
-.plano-badge { background-color: #DBEAFE; color: #1D4ED8; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.plano-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
 
+.plano-badge.ativo {
+  background-color: #DCFCE7;
+  color: #166534;
+}
+
+.plano-badge.semPlano {
+  background-color: #FEE2E2;
+  color: #991B1B;
+}
 button { border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
 
 .btn-agendar { background-color: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }

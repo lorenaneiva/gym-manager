@@ -33,28 +33,79 @@
       "plano": 1
     },
     {
-      "id": "5",
-      "login": "mariana",
       "name": "Mariana",
+      "login": "mariana",
       "password": "12345",
-      "role": "guest",
-      "plano": 1
+      "role": "aluno",
+      "plano": "1",
+      "id": "5"
     },
     {
       "name": "Bruno",
       "login": "bruno",
       "password": "12345",
       "role": "aluno",
-      "plano": 0,
+      "plano": 1,
       "id": "b4QK9UIkT0o"
     },
     {
-      "name": "Bruno",
-      "login": "bruno",
-      "password": "12345",
-      "role": "instrutor",
+      "name": "lorena",
+      "login": "lorenaneiva@gmail.com",
+      "password": "lorena123",
+      "role": "aluno",
+      "plano": 1,
+      "id": "qFwE0XHmhts"
+    },
+    {
+      "login": "pedro",
+      "name": "pedro damasceno ",
+      "password": "123",
+      "role": "recepcionista",
       "plano": 0,
-      "id": "czTjT8mWTvI"
+      "id": "3Wjp8vcR6As"
+    },
+    {
+      "name": "Eduarda Ribeiro",
+      "login": "eduarda",
+      "password": "123",
+      "role": "aluno",
+      "plano": 1,
+      "id": "Iiphup-fblk"
+    },
+    {
+      "name": "eduarda rodrigues ribeiro ",
+      "login": "madu",
+      "password": "123",
+      "role": "aluno",
+      "plano": 1,
+      "id": "D06foC6dKGk",
+      "planoId": 1,
+      "ativo": true
+    },
+    {
+      "name": "lorena",
+      "login": "lorena123",
+      "password": "123",
+      "role": "guest",
+      "plano": null,
+      "id": "mJpIlrH_F30"
+    },
+    {
+      "name": "teste",
+      "login": "teste",
+      "password": "123",
+      "role": "aluno",
+      "plano": 1,
+      "id": "8Hz2VNkkFLU",
+      "ativo": true
+    },
+    {
+      "name": "joaozinho",
+      "login": "jao",
+      "password": "123",
+      "role": "aluno",
+      "plano": null,
+      "id": "Ul6DIrWpygU"
     }
   ],
   "planos": [
@@ -65,6 +116,14 @@
       "valor": 99.9,
       "duracaoDias": 30,
       "ativo": true
+    },
+    {
+      "nome": "Plano Trimestral",
+      "descricao": "Tenha acesso completo a nossa academia por 3 meses completo!",
+      "valor": 199.99,
+      "duracaoDias": 90,
+      "ativo": true,
+      "id": "0_EkTUEw06w"
     }
   ],
   "mensalidades": [
@@ -130,6 +189,27 @@
       ],
       "ativo": true,
       "id": "fdXnIuQEmeQ"
+    },
+    {
+      "alunoId": "8Hz2VNkkFLU",
+      "instrutorId": "3",
+      "nome": "TREINO A - inferiores",
+      "objetivo": "malha forte",
+      "dataCriacao": "2026-05-03",
+      "exercicios": [
+        {
+          "nome": "teste",
+          "series": 3,
+          "repeticoes": "12"
+        },
+        {
+          "nome": "teste2",
+          "series": 4,
+          "repeticoes": "5"
+        }
+      ],
+      "ativo": true,
+      "id": "JEodW4a8hBc"
     }
   ],
   "agendamentos": [
@@ -164,6 +244,17 @@
       "observacao": "",
       "dataCriacao": "2026-05-01",
       "id": "RXy29ggczAg"
+    },
+    {
+      "alunoId": "qFwE0XHmhts",
+      "funcionarioId": "1",
+      "tipo": "2",
+      "data": "2026-05-17",
+      "hora": "05:22",
+      "status": "agendado",
+      "observacao": "asdasdasd",
+      "dataCriacao": "2026-05-03",
+      "id": "2toJI_hoRIU"
     }
   ],
   "assinaturas": [

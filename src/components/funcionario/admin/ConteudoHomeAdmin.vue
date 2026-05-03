@@ -36,17 +36,17 @@ const gerenciarAdmin = (rota) => {
       <MyButton @click="gerenciarAdmin('agendamentos')">Ver agendamentos</MyButton>
     </MyCard>
 
-    <MyCard>
-      <h3>Relatorios</h3>
-      <p>Acesse os relatorios</p>
-      <MyButton @click="gerenciarAdmin('relatorios')">Ver relatórios</MyButton>
-    </MyCard>
+<!--    <MyCard>-->
+<!--      <h3>Relatorios</h3>-->
+<!--      <p>Acesse os relatorios</p>-->
+<!--      <MyButton @click="gerenciarAdmin('relatorios')">Ver relatórios</MyButton>-->
+<!--    </MyCard>-->
 
-    <MyCard>
-      <h3>Mensalidades</h3>
-      <p>Acompanhe os pagamentos dos alunos</p>
-      <MyButton @click="gerenciarAdmin('mensalidades')">Ver mensalidades</MyButton>
-    </MyCard>
+<!--    <MyCard>-->
+<!--      <h3>Mensalidades</h3>-->
+<!--      <p>Acompanhe os pagamentos dos alunos</p>-->
+<!--      <MyButton @click="gerenciarAdmin('mensalidades')">Ver mensalidades</MyButton>-->
+<!--    </MyCard>-->
   </div>
 </template>
 

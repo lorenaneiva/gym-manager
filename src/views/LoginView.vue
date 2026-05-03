@@ -24,7 +24,7 @@ async function doLogin() {
         // redireciona conforme role
         switch (usuario.role) {
           case 'aluno':
-            router.push('/aluno')
+            router.push('/')
             break
           case 'admin':
           case 'instrutor':

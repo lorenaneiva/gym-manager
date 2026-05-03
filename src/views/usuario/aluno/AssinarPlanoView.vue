@@ -1,13 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue'
-import axios from 'axios';
-import { useUserStore } from '@/stores/user';
+import axios from 'axios'
+import { useUserStore } from '@/stores/user'
+import { useRouter, useRoute } from 'vue-router'
+import { API_URL } from '@/api'
 
-import { useRouter, useRoute } from 'vue-router';
+const userStore = useUserStore()
+const router = useRouter()
+const route = useRoute()
 
-const userStore = useUserStore();
-const router = useRouter();
-const route = useRoute();
 const formaPagamento = ref('credito')
 const cvv = ref('')
 const referencia = ref('')
@@ -16,67 +17,84 @@ const dataVencimento = ref('')
 
 const atualizarRolePatch = async () => {
   try {
-    const planoId = route.params.id; // Pegando o ID do plano selecionado na URL
+    if (!userStore.user) {
+      alert('Você precisa estar logado para assinar um plano.')
+      router.push('/login')
+      return
+    }
 
-    await axios.patch(`http://localhost:3000/users/${userStore.user.id}`, {
-			role: 'aluno',
-      planoId: planoId,
-      ativo: true // Ativa a assinatura do usuário
-  });
-  userStore.setUser({ ...userStore.user, role: 'aluno', planoId, ativo: true});
+    const planoId = Number(route.params.id)
 
-  router.push('/treinos');
+    const response = await axios.patch(`${API_URL}/users/${userStore.user.id}`, {
+      role: 'aluno',
+      plano: planoId,
+      ativo: true
+    })
 
+    userStore.setUser(response.data)
+
+    router.push({
+      path: '/perfil',
+      query: {
+        sucesso: 'plano-assinado'
+      }
+    })
   } catch (error) {
-    console.log('Erro ao confirmar a assinatura', error);
-    alert('Ocorreu um erro ao processar o seu pagamento')
-    console.error('Erro ao confirmar a assinatura', error);
-    
+    console.error('Erro ao confirmar a assinatura', error)
+
     if (error.code === 'ERR_NETWORK') {
-      alert('Erro de Conexão: O servidor (json-server) parece estar desligado.');
+      alert('Erro de conexão: o servidor JSON Server parece estar desligado.')
     } else if (error.response && error.response.status === 404) {
-      alert(`Erro 404: O usuário com ID ${userStore.user.id} não foi encontrado no banco de dados (db.json).`);
+      alert(`Erro 404: o usuário com ID ${userStore.user?.id} não foi encontrado no banco de dados.`)
     } else {
-      alert('Ocorreu um erro ao processar o seu pagamento: ' + error.message);
+      alert('Ocorreu um erro ao processar o pagamento: ' + error.message)
     }
   }
-
 }
 
 const formatarDataVencimento = (event) => {
-  let value = event.target.value;
-  value = value.replace(/\D/g, '');
-  if (value.length > 2) {
-    value = value.substring(0, 2) + '/' + value.substring(2, 4);
-  }
-  dataVencimento.value = value;
-}
+  let value = event.target.value
 
+  value = value.replace(/\D/g, '')
+
+  if (value.length > 2) {
+    value = value.substring(0, 2) + '/' + value.substring(2, 4)
+  }
+
+  dataVencimento.value = value
+}
 
 const soLetras = (e) => {
-  let char = String.fromCharCode(e.keyCode);
-  if (/^[a-zA-Z ]+$/.test(char)) return true;
-  else e.preventDefault();
-} 
+  const char = String.fromCharCode(e.keyCode)
+
+  if (/^[a-zA-Z ]+$/.test(char)) {
+    return true
+  }
+
+  e.preventDefault()
+}
 
 const soNumeros = (e) => {
-  let char = String.fromCharCode(e.keyCode);
-  if (/^[0-9]+$/.test(char)) return true;
-  else e.preventDefault();
-  
+  const char = String.fromCharCode(e.keyCode)
+
+  if (/^[0-9]+$/.test(char)) {
+    return true
+  }
+
+  e.preventDefault()
 }
+
 const valido = computed(() => {
-  return /^[0-9]*$/.test(referencia.value);
+  return /^[0-9]*$/.test(referencia.value)
 })
+
 const cvvValido = computed(() => {
-  return /^[0-9]*$/.test(cvv.value);
+  return /^[0-9]*$/.test(cvv.value)
 })
 
 const letrasCertas = computed(() => {
-  return /^[a-zA-Z ]*$/.test(variasLetras.value);
+  return /^[a-zA-Z ]*$/.test(variasLetras.value)
 })
-
-
 </script>
 
 <template>
@@ -86,57 +104,120 @@ const letrasCertas = computed(() => {
     </div>
 
     <div id="form">
-
       <div class="checkbox-item">
-        <input v-model="formaPagamento" value="credito" id="pagamento-credito" class="radio" type="radio">
-        <label for="pagamento-cartao">Cartão de crédito</label>
+        <input
+          v-model="formaPagamento"
+          value="credito"
+          id="pagamento-credito"
+          class="radio"
+          type="radio"
+        />
 
+        <label for="pagamento-credito">
+          Cartão de crédito
+        </label>
       </div>
+
       <div class="checkbox-item">
-        <input v-model="formaPagamento" value="debito" id="pagamento-debito" class="radio" type="radio">
-        <label for="pagamento-cartao">Cartão de débito</label>
+        <input
+          v-model="formaPagamento"
+          value="debito"
+          id="pagamento-debito"
+          class="radio"
+          type="radio"
+        />
+
+        <label for="pagamento-debito">
+          Cartão de débito
+        </label>
       </div>
 
       <div class="campo">
         <label>Número do cartão</label>
-        <input type="text" v-model="referencia" maxlength="12" @keypress="soNumeros($event)" placeholder="Ex: 0123456789012345" />
-        <p v-if="!valido" style="color:red">Formato de referência inválido.</p>
+
+        <input
+          type="text"
+          v-model="referencia"
+          maxlength="16"
+          @keypress="soNumeros($event)"
+          placeholder="Ex: 0123456789012345"
+        />
+
+        <p v-if="!valido" class="erro-validacao">
+          Formato de referência inválido.
+        </p>
       </div>
 
       <div class="campo">
-          <label>Nome do cartão</label>
-          <input type="text" v-model="variasLetras" @keypress="soLetras($event)" placeholder="Jorge Centelha dos Santos" />
-          <p v-if="!letrasCertas" style="color:red">Formato de referência inválido.</p>
-        </div>
+        <label>Nome do cartão</label>
+
+        <input
+          type="text"
+          v-model="variasLetras"
+          @keypress="soLetras($event)"
+          placeholder="Jorge Centelha dos Santos"
+        />
+
+        <p v-if="!letrasCertas" class="erro-validacao">
+          Formato de referência inválido.
+        </p>
+      </div>
 
       <div id="duplo">
         <div class="inputs">
-          <label>Data de Vencimento</label>
-          <input type="text" v-model="dataVencimento" @input="formatarDataVencimento" maxlength="5" placeholder="Ex: MM/AA"  />
+          <label>Data de vencimento</label>
+
+          <input
+            type="text"
+            v-model="dataVencimento"
+            @input="formatarDataVencimento"
+            maxlength="5"
+            placeholder="Ex: MM/AA"
+          />
         </div>
 
         <div class="inputs">
-        <label>CVV</label>
-        <input type="text" v-model="cvv" maxlength="3" @keypress="soNumeros($event)" placeholder="ex: 000" />
-        <p v-if="!cvvValido" style="color:red">Formato de referência inválido.</p>
-      </div>
-        
+          <label>CVV</label>
+
+          <input
+            type="text"
+            v-model="cvv"
+            maxlength="3"
+            @keypress="soNumeros($event)"
+            placeholder="Ex: 000"
+          />
+
+          <p v-if="!cvvValido" class="erro-validacao">
+            Formato de referência inválido.
+          </p>
+        </div>
       </div>
 
       <div id="botoes">
-        <button type="submit" id="cadastrar" @click.prevent="atualizarRolePatch">Salvar alterações</button>
-        <button id="cancelar">Cancelar</button>
+        <button
+          type="button"
+          id="cadastrar"
+          @click.prevent="atualizarRolePatch"
+        >
+          Salvar alterações
+        </button>
+
+        <button
+          type="button"
+          id="cancelar"
+          @click="router.push('/')"
+        >
+          Cancelar
+        </button>
       </div>
-
-
     </div>
   </main>
 </template>
 
 <style scoped>
 main {
-  background-color: #EFF6FF;
-  min-height: 100px;
+  background-color: #eff6ff;
+  min-height: 100vh;
   padding: 32px;
 }
 
@@ -150,15 +231,9 @@ h3 {
   margin: 0 0 4px;
 }
 
-#subtitulo {
-  color: #2563EB;
-  font-size: 13px;
-  margin: 0;
-}
-
 #form {
   background-color: #fff;
-  border: 0.5px solid #BFDBFE;
+  border: 0.5px solid #bfdbfe;
   border-radius: 12px;
   padding: 1.5rem;
   max-width: 640px;
@@ -171,7 +246,7 @@ label {
   display: block;
   font-size: 15px;
   font-weight: 500;
-  color: #1E3A8A;
+  color: #1e3a8a;
   margin-bottom: 6px;
 }
 
@@ -181,11 +256,11 @@ textarea {
   width: 100%;
   box-sizing: border-box;
   padding: 8px 12px;
-  border: 0.5px solid #BFDBFE;
+  border: 0.5px solid #bfdbfe;
   border-radius: 8px;
   font-size: 14px;
   color: #172554;
-  background-color: #EFF6FF;
+  background-color: #eff6ff;
   outline: none;
 }
 
@@ -196,7 +271,7 @@ textarea {
 
 #duplo {
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   gap: 16px;
 }
 
@@ -204,36 +279,36 @@ textarea {
   flex: 1;
 }
 
-#checkbox-item {
+.checkbox-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #1E3A8A;
+  color: #1e3a8a;
   font-size: 13px;
 }
 
-#checkbox-item label {
+.checkbox-item label {
   margin: 0;
-  color: #1E3A8A;
+  color: #1e3a8a;
   cursor: pointer;
 }
 
-#checkbox-item input {
+.checkbox-item input {
   width: 16px;
   height: 16px;
-  accent-color: #2563EB;
+  accent-color: #2563eb;
   cursor: pointer;
 }
 
 #botoes {
   display: flex;
-  flex-direction: column; /* Mobile: empilhado */
+  flex-direction: column;
   gap: 12px;
 }
 
 #cadastrar {
   flex: 1;
-  background-color: #2563EB;
+  background-color: #2563eb;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -245,24 +320,22 @@ textarea {
 
 #cancelar {
   background-color: transparent;
-  color: #2563EB;
-  border: 0.5px solid #BFDBFE;
+  color: #2563eb;
+  border: 0.5px solid #bfdbfe;
   border-radius: 8px;
   padding: 10px 20px;
   font-size: 14px;
   cursor: pointer;
 }
-#referencia {
-  display: block;
-  font-size: 15px;
-  font-weight: 500;
-  color: #1E3A8A;
-  margin-bottom: 6px;
+
+.erro-validacao {
+  color: red;
+  margin: 6px 0 0;
+  font-size: 13px;
 }
 
-/* Desktop: lado a lado */
 @media (min-width: 768px) {
-  #duplo, 
+  #duplo,
   #botoes {
     flex-direction: row;
   }

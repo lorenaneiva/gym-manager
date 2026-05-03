@@ -30,7 +30,7 @@ import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 
 const planos = ref([])
-const imagemPadrao = 'https://via.placeholder.com/300'
+const imagemPadrao = 'https://placehold.co/300x190?text=Plano'
 const userStore = useUserStore()
 const router = useRouter()
 
@@ -41,9 +41,9 @@ async function buscarPlanos() {
 
 function assinarPlano(id) {
   if (userStore.isLogged) {
-    router.push(`/pagamento/${id}`)
+    router.push(`/assinar-plano/${id}`)
   } else {
-    router.push('/registro')
+    router.push('/register')
   }
 }
 

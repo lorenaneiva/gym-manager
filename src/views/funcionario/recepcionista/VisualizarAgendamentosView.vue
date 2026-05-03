@@ -1,6 +1,8 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
-import { api } from '@/services/api.js'
+import axios from 'axios'
+
+import { API_URL } from '../../../api'
 import CadastrarAgendamento from '@/components/funcionario/recepcionista/CadastrarAgendamento.vue'
 
 const agendamentos = ref([])
@@ -20,8 +22,8 @@ const fetchData = async () => {
   try {
     loading.value = true
     const [agRes, usersRes] = await Promise.all([
-      api.get('/agendamentos'),
-      api.get('/users')
+      axios.get(`${API_URL}/agendamentos`),
+      axios.get(`${API_URL}/users`)
     ])
     agendamentos.value = agRes.data
     alunos.value = usersRes.data.filter(u => u.role?.toLowerCase() === 'aluno')
@@ -60,7 +62,7 @@ const getNomeAluno = (id) => {
 const deletar = async (id) => {
   if (!confirm('Deseja excluir?')) return
   try {
-    await api.delete(`/agendamentos/${id}`)
+    await axios.delete(`${API_URL}//agendamentos/${id}`)
     showFeedback('Excluído com sucesso!')
     await fetchData()
   } catch {
@@ -73,7 +75,7 @@ const iniciarEdicao = (ag) => { editando.value = { ...ag } }
 const salvarEdicao = async () => {
   try {
     salvandoId.value = editando.value.id
-    await api.put(`/agendamentos/${editando.value.id}`, editando.value)
+    await axios.put(`${API_URL}/agendamentos/${editando.value.id}`, editando.value)
     showFeedback('Alterações salvas!')
     editando.value = null
     await fetchData()

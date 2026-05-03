@@ -1,18 +1,10 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { useRouter } from 'vue-router'
 
 export const useUserStore = defineStore('user', () => {
-  const user = ref({
-    id: 1,
-    name: 'Bruno',
-    role: 'admin'
-  })
-
-  //  const user = ref({
-  //  name: 'asddsadsa',
-  //  role: 'x' |  varia entre admin, recepcionista e instrutor pra testar.
-  // OBS: APAGUE O COMANDO ACIMA DESSE: "const user = ref (null)".
-  //})
+  const user = ref(null)
+  const router = useRouter()
 
   function setUser(loggedUser) {
     user.value = loggedUser
@@ -20,6 +12,7 @@ export const useUserStore = defineStore('user', () => {
 
   function logout() {
     user.value = null
+    router.push('/')
   }
 
   function hasRole(role) {
@@ -32,7 +25,7 @@ export const useUserStore = defineStore('user', () => {
   const isRecepcionista = computed(() => hasRole('recepcionista'))
   const isInstrutor = computed(() => hasRole('instrutor'))
   const isAluno = computed(() => hasRole('aluno'))
-  const isGuest = computed(() => hasRole('guest'))
+  const isGuest = computed(() => hasRole('guest') || Object.keys(user.value || {}).length === 0)
 
   return {
     user,
