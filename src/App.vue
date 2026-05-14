@@ -4,11 +4,15 @@ import TheNavbar from "./components/layout/TheNavbar.vue";
 </script>
 
 <template>
-  <TheNavbar/>
-
-  <RouterView />
+  <div class="app-shell">
+    <TheNavbar/>
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
-
+.app-shell {
+  min-height: 100vh;
+  background: var(--app-background);
+}
 </style>

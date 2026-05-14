@@ -1,15 +1,41 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { useRouter } from 'vue-router'
+
+const VALID_ROLES = ['admin', 'recepcionista', 'instrutor', 'aluno', 'guest']
+
+function getSavedUser() {
+  try {
+    const savedUser = JSON.parse(localStorage.getItem('fitblue:user'))
+    return VALID_ROLES.includes(savedUser?.role) ? savedUser : null
+  } catch {
+    localStorage.removeItem('fitblue:user')
+    return null
+  }
+}
 
 export const useUserStore = defineStore('user', () => {
-  const user = ref(null)
+  const user = ref(getSavedUser())
+  const router = useRouter()
 
   function setUser(loggedUser) {
+    if (!VALID_ROLES.includes(loggedUser?.role)) {
+      clearUser()
+      return
+    }
+
     user.value = loggedUser
+    localStorage.setItem('fitblue:user', JSON.stringify(loggedUser))
+  }
+
+  function clearUser() {
+    user.value = null
+    localStorage.removeItem('fitblue:user')
   }
 
   function logout() {
-    user.value = null
+    clearUser()
+    router.push('/')
   }
 
   function hasRole(role) {
@@ -27,6 +53,7 @@ export const useUserStore = defineStore('user', () => {
   return {
     user,
     setUser,
+    clearUser,
     logout,
     hasRole,
     isLogged,

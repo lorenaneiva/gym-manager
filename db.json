@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "login": "admin1",
       "name": "Administrador",
       "password": "123",
@@ -9,7 +9,7 @@
       "plano": 0
     },
     {
-      "id": 2,
+      "id": "2",
       "login": "lorena",
       "name": "Lorena",
       "password": "1234",
@@ -17,7 +17,7 @@
       "plano": 0
     },
     {
-      "id": 3,
+      "id": "3",
       "login": "pedro",
       "name": "Pedro",
       "password": "12345",
@@ -25,7 +25,7 @@
       "plano": 1
     },
     {
-      "id": 4,
+      "id": "4",
       "login": "leticia",
       "name": "Leticia",
       "password": "12345",
@@ -33,27 +33,112 @@
       "plano": 1
     },
     {
-      "id": 5,
-      "login": "mariana",
       "name": "Mariana",
+      "login": "mariana",
       "password": "12345",
-      "role": "guest",
-      "plano": 1
+      "role": "aluno",
+      "plano": "1",
+      "id": "5"
+    },
+    {
+      "name": "Bruno",
+      "login": "bruno",
+      "password": "12345",
+      "role": "aluno",
+      "plano": 1,
+      "id": "b4QK9UIkT0o"
+    },
+    {
+      "name": "lorena",
+      "login": "lorenaneiva@gmail.com",
+      "password": "lorena123",
+      "role": "aluno",
+      "plano": 1,
+      "id": "qFwE0XHmhts"
+    },
+    {
+      "login": "pedro",
+      "name": "pedro damasceno ",
+      "password": "123",
+      "role": "recepcionista",
+      "plano": 0,
+      "id": "3Wjp8vcR6As"
+    },
+    {
+      "name": "Eduarda Ribeiro",
+      "login": "eduarda",
+      "password": "123",
+      "role": "aluno",
+      "plano": 1,
+      "id": "Iiphup-fblk"
+    },
+    {
+      "name": "eduarda rodrigues ribeiro ",
+      "login": "madu",
+      "password": "123",
+      "role": "aluno",
+      "plano": 1,
+      "id": "D06foC6dKGk",
+      "planoId": 1,
+      "ativo": true
+    },
+    {
+      "name": "lorena",
+      "login": "lorena123",
+      "password": "123",
+      "role": "aluno",
+      "plano": "1",
+      "planoId": "1",
+      "ativo": true,
+      "id": "mJpIlrH_F30"
+    },
+    {
+      "name": "teste",
+      "login": "teste",
+      "password": "123",
+      "role": "aluno",
+      "plano": 1,
+      "id": "8Hz2VNkkFLU",
+      "ativo": true
+    },
+    {
+      "name": "joaozinho",
+      "login": "jao",
+      "password": "123",
+      "role": "aluno",
+      "plano": null,
+      "id": "Ul6DIrWpygU"
     }
   ],
   "planos": [
     {
-      "id": 1,
+      "id": "1",
       "nome": "Plano Mensal",
       "descricao": "Acesso livre à academia durante 30 dias.",
       "valor": 99.9,
       "duracaoDias": 30,
       "ativo": true
+    },
+    {
+      "nome": "Plano Trimestral",
+      "descricao": "Tenha acesso completo a nossa academia por 3 meses completo!",
+      "valor": 199.99,
+      "duracaoDias": 90,
+      "ativo": true,
+      "id": "0_EkTUEw06w"
+    },
+    {
+      "id": "vip-anual",
+      "nome": "Plano VIP Anual",
+      "descricao": "Experiencia completa com acesso anual, acompanhamento prioritario e beneficios exclusivos.",
+      "valor": 899.9,
+      "duracaoDias": 365,
+      "ativo": true
     }
   ],
   "mensalidades": [
     {
-      "id": 1,
+      "id": "1",
       "alunoId": 4,
       "planoId": 1,
       "valor": 99.9,
@@ -65,7 +150,7 @@
   ],
   "treinos": [
     {
-      "id": 1,
+      "id": "1",
       "alunoId": 4,
       "instrutorId": 3,
       "nome": "Treino A - Inferiores",
@@ -84,23 +169,107 @@
           "repeticoes": "12"
         }
       ]
+    },
+    {
+      "alunoId": "b4QK9UIkT0o",
+      "nome": "123",
+      "objetivo": "123",
+      "exercicios": [
+        {
+          "nome": "132",
+          "series": 123,
+          "repeticoes": "123"
+        }
+      ],
+      "ativo": true,
+      "id": "rHs-5TMMfqI"
+    },
+    {
+      "alunoId": "b4QK9UIkT0o",
+      "instrutorId": "3",
+      "nome": "123",
+      "objetivo": "123",
+      "dataCriacao": "2026-05-01",
+      "exercicios": [
+        {
+          "nome": "123",
+          "series": 123,
+          "repeticoes": "123"
+        }
+      ],
+      "ativo": true,
+      "id": "fdXnIuQEmeQ"
+    },
+    {
+      "alunoId": "8Hz2VNkkFLU",
+      "instrutorId": "3",
+      "nome": "TREINO A - inferiores",
+      "objetivo": "malha forte",
+      "dataCriacao": "2026-05-03",
+      "exercicios": [
+        {
+          "nome": "teste",
+          "series": 3,
+          "repeticoes": "12"
+        },
+        {
+          "nome": "teste2",
+          "series": 4,
+          "repeticoes": "5"
+        }
+      ],
+      "ativo": true,
+      "id": "JEodW4a8hBc"
     }
   ],
   "agendamentos": [
     {
-      "id": 1,
+      "id": "1",
       "alunoId": 4,
       "funcionarioId": 2,
       "tipo": "Avaliação física",
       "data": "2026-04-28",
-      "hora": "09:00",
+      "hora": "10:30",
       "status": "agendado",
       "observacao": "Primeira avaliação da aluna."
+    },
+    {
+      "alunoId": "b4QK9UIkT0o",
+      "funcionarioId": "1",
+      "tipo": "Avaliação fisica",
+      "data": "2026-05-01",
+      "hora": "22:33",
+      "status": "agendado",
+      "observacao": "Segunda Avaliação do alunos",
+      "dataCriacao": "2026-05-01",
+      "id": "UerKH-adqaw"
+    },
+    {
+      "alunoId": "b4QK9UIkT0o",
+      "funcionarioId": "1",
+      "tipo": "treinos",
+      "data": "2026-05-07",
+      "hora": "22:04",
+      "status": "agendado",
+      "observacao": "",
+      "dataCriacao": "2026-05-01",
+      "id": "RXy29ggczAg"
+    },
+    {
+      "alunoId": "qFwE0XHmhts",
+      "funcionarioId": "1",
+      "tipo": "2",
+      "data": "2026-05-17",
+      "hora": "05:22",
+      "status": "agendado",
+      "observacao": "asdasdasd",
+      "dataCriacao": "2026-05-03",
+      "id": "2toJI_hoRIU"
     }
   ],
   "assinaturas": [
     {
-      "id": 1,
+      "id": "1",
       "guestId": 5,
       "planoId": 1,
       "dataSolicitacao": "2026-04-26",
@@ -109,11 +278,12 @@
   ],
   "relatorios": [
     {
-      "id": 1,
+      "id": "1",
       "titulo": "Alunos ativos",
       "descricao": "Relatório com todos os alunos ativos da academia.",
       "tipo": "alunos",
       "permitidoPara": "admin"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
