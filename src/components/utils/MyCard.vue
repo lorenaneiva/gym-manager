@@ -10,10 +10,12 @@
 
 <style scoped>
 .AppCard {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 12px;
-  margin: 4px;
+  border: 1px solid var(--line-blue);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
 }
 
 </style>

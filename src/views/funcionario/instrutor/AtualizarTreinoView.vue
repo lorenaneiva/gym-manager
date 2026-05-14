@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import { API_URL } from '@/api';
 
 const route = useRoute();
 const router = useRouter();
@@ -21,7 +22,7 @@ const carregando = ref(true);
 // Busca a lista de alunos para o select
 const buscarAlunos = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/users?role=aluno');
+    const response = await axios.get(`${API_URL}/users?role=aluno`);
     alunos.value = response.data;
   } catch (error) {
     console.error('Erro ao buscar alunos:', error);
@@ -31,7 +32,7 @@ const buscarAlunos = async () => {
 // Busca os dados do treino atual para preencher o formulário
 const buscarTreinoAtual = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/treinos/${treinoId.value}`);
+    const response = await axios.get(`${API_URL}/treinos/${treinoId.value}`);
     const treino = response.data;
     
     alunoId.value = treino.alunoId;
@@ -74,7 +75,7 @@ const validarEAtualizar = async () => {
 
   if (Object.keys(erros.value).length === 0) {
     try {
-      await axios.put(`http://localhost:3000/treinos/${treinoId.value}`, {
+      await axios.put(`${API_URL}/treinos/${treinoId.value}`, {
         alunoId: alunoId.value,
         nome: nomeTreino.value,
         objetivo: objetivo.value,

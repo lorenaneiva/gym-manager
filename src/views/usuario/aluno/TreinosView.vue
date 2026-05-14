@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
 import { useRoute } from 'vue-router';
+import { API_URL } from '@/api';
 
 const userStore = useUserStore();
 const route = useRoute();
@@ -22,7 +23,7 @@ const buscarTreinos = async () => {
       return;
     }
 
-    const response = await axios.get(`http://localhost:3000/treinos?alunoId=${alunoId}`);
+    const response = await axios.get(`${API_URL}/treinos?alunoId=${alunoId}`);
 
     // Filtrando apenas os treinos que possuem ativo = true e 
     // adicionando um campo 'expandido' para gerenciar a exibição na interface

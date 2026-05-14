@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 //para fazer a requisição de cadastro do plano para o backend
 import { useUserStore } from '@/stores/user'
+import { API_URL } from '@/api'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -28,7 +29,7 @@ async function cadastrarPlano() {
   if (!userStore.isAdmin) return
 
   try {
-    await axios.post('http://localhost:3000/planos', {
+    await axios.post(`${API_URL}/planos`, {
       //requisição post e usando number pra poder converter os valores, É NO INICIO E NAO NO FINAL QUE NEM FLUTTER
       nome: nome.value,
       descricao: descricao.value,

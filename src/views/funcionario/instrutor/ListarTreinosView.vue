@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { API_URL } from '@/api';
 
 const router = useRouter();
 const treinos = ref([]);
@@ -13,8 +14,8 @@ const erro = ref('');
 const buscarDados = async () => {
   try {
     const [resTreinos, resAlunos] = await Promise.all([
-      axios.get('http://localhost:3000/treinos'),
-      axios.get('http://localhost:3000/users?role=aluno')
+      axios.get(`${API_URL}/treinos`),
+      axios.get(`${API_URL}/users?role=aluno`)
     ]);
 
     treinos.value = resTreinos.data;
@@ -42,7 +43,7 @@ const editarTreino = (id) => {
 const excluirTreino = async (id) => {
   if (confirm('Tem certeza que deseja excluir este treino permanentemente?')) {
     try {
-      await axios.delete(`http://localhost:3000/treinos/${id}`);
+      await axios.delete(`${API_URL}/treinos/${id}`);
       treinos.value = treinos.value.filter(t => t.id !== id);
       alert('Treino excluído com sucesso!');
     } catch (err) {

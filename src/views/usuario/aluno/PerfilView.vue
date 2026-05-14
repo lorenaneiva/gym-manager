@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import axios from 'axios'
 import { API_URL } from '@/api'
 import { useUserStore } from '@/stores/user'
+import { RouterLink } from 'vue-router'
 
 const userStore = useUserStore()
 
@@ -12,6 +13,7 @@ const mensalidade = ref(null)
 const treinos = ref([])
 const agendamentos = ref([])
 const assinatura = ref(null)
+const instrutor = ref(null)
 
 const loading = ref(true)
 const erro = ref('')
@@ -32,16 +34,24 @@ const roleFormatada = computed(() => {
   return roles[usuario.value?.role] || 'Não informado'
 })
 
+const roleClass = computed(() => {
+  return `role-${usuario.value?.role || 'guest'}`
+})
+
 const statusUsuario = computed(() => {
-  if (userStore.isAluno) {
+  if (usuario.value?.role === 'aluno') {
     return 'Aluno ativo'
   }
 
-  if (userStore.isGuest) {
+  if (usuario.value?.role === 'guest') {
     return 'Aguardando aprovação'
   }
 
   return 'Funcionário'
+})
+
+const planoIdUsuario = computed(() => {
+  return usuario.value?.planoId || usuario.value?.plano || null
 })
 
 function formatarData(data) {
@@ -66,10 +76,13 @@ async function buscarPerfil() {
 
     const responseUsuario = await axios.get(`${API_URL}/users/${userLogado.id}`)
     usuario.value = responseUsuario.data
+    userStore.setUser(responseUsuario.data)
 
-    if (usuario.value.plano) {
-      const responsePlano = await axios.get(`${API_URL}/planos/${usuario.value.plano}`)
-      plano.value = responsePlano.data
+    if (planoIdUsuario.value) {
+      const responsePlanos = await axios.get(`${API_URL}/planos`)
+      plano.value = responsePlanos.data.find(
+        (item) => String(item.id) === String(planoIdUsuario.value)
+      ) || null
     }
 
     if (usuario.value.role === 'aluno') {
@@ -85,6 +98,17 @@ async function buscarPerfil() {
 
       treinos.value = responseTreinos.data
 
+      const instrutorId = treinos.value.find((treino) => treino.instrutorId)?.instrutorId
+
+      if (instrutorId) {
+        try {
+          const responseInstrutor = await axios.get(`${API_URL}/users/${instrutorId}`)
+          instrutor.value = responseInstrutor.data
+        } catch {
+          instrutor.value = null
+        }
+      }
+
       const responseAgendamentos = await axios.get(
         `${API_URL}/agendamentos?alunoId=${usuario.value.id}`
       )
@@ -99,7 +123,7 @@ async function buscarPerfil() {
 
       assinatura.value = responseAssinaturas.data[0] || null
     }
-  } catch (error) {
+  } catch {
     erro.value = 'Não foi possível carregar os dados do perfil.'
   } finally {
     loading.value = false
@@ -124,15 +148,22 @@ onMounted(() => {
       </div>
 
       <div v-else-if="usuario" class="conteudo-perfil">
-        <section class="cabecalho-perfil">
-          <div class="avatar">
-            {{ inicialUsuario }}
+        <section class="cabecalho-perfil" :class="roleClass">
+          <div class="avatar-area">
+            <div class="avatar">
+              {{ inicialUsuario }}
+            </div>
+
+            <span class="role-badge">
+              {{ roleFormatada }}
+            </span>
           </div>
 
-          <div>
-            <h1>Meu Perfil</h1>
+          <div class="profile-copy">
+            <span class="eyebrow">Sessão atual</span>
+            <h1>{{ usuario.name }}</h1>
             <p class="subtitulo">
-              Informações da conta e situação na academia
+              {{ statusUsuario }} usando o acesso {{ usuario.login }}
             </p>
           </div>
         </section>
@@ -172,10 +203,32 @@ onMounted(() => {
             <div class="valor">
               R$ {{ plano.valor.toFixed(2).replace('.', ',') }}
             </div>
+
+            <RouterLink v-if="usuario.role === 'aluno'" to="/planos" class="link-plano">
+              Atualizar plano
+            </RouterLink>
           </div>
 
           <div v-else class="card vazio">
             Nenhum plano vinculado ao usuário.
+          </div>
+        </section>
+
+        <section v-if="usuario.role === 'aluno'" class="secao">
+          <h2>Instrutor designado</h2>
+
+          <div v-if="instrutor" class="card detalhes">
+            <p>
+              <strong>{{ instrutor.name }}</strong>
+            </p>
+
+            <p>
+              Login: {{ instrutor.login }}
+            </p>
+          </div>
+
+          <div v-else class="card vazio">
+            Nenhum instrutor designado ainda.
           </div>
         </section>
 
@@ -286,47 +339,114 @@ onMounted(() => {
 <style scoped>
 .perfil {
   min-height: 100vh;
-  background: #f4f7f5;
-  padding: 40px 20px;
+  background: var(--app-background);
+  padding: 32px clamp(16px, 4vw, 48px);
 }
 
 .container {
   max-width: 1150px;
   margin: 0 auto;
-  background: white;
-  padding: 40px;
-  border-radius: 22px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
 }
 
 .cabecalho-perfil {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 22px;
-  margin-bottom: 35px;
+  gap: 24px;
+  min-height: 172px;
+  margin-bottom: 24px;
+  padding: 32px;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+  box-shadow: 0 24px 48px rgba(31, 101, 255, 0.2);
+}
+
+.cabecalho-perfil::after {
+  content: "";
+  position: absolute;
+  inset: auto -60px -90px auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cabecalho-perfil.role-admin {
+  background: linear-gradient(135deg, #1f65ff, #172554);
+}
+
+.cabecalho-perfil.role-instrutor {
+  background: linear-gradient(135deg, #0ea5e9, #1d4ed8);
+}
+
+.cabecalho-perfil.role-recepcionista {
+  background: linear-gradient(135deg, #2563eb, #0f766e);
+}
+
+.cabecalho-perfil.role-aluno {
+  background: linear-gradient(135deg, #2f82ff, #1e40af);
+}
+
+.avatar-area,
+.profile-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.avatar-area {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
 }
 
 .avatar {
-  width: 86px;
-  height: 86px;
-  border-radius: 50%;
-  background: #1f1f1f;
+  width: 96px;
+  height: 96px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.16);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 38px;
+  font-size: 40px;
+  font-weight: 700;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #bfdbfe;
+  font-size: 13px;
   font-weight: 700;
 }
 
 h1 {
-  font-size: 36px;
-  margin-bottom: 8px;
-  color: #1f1f1f;
+  font-size: clamp(30px, 5vw, 44px);
+  margin: 0 0 8px;
+  color: #fff;
 }
 
 .subtitulo {
-  color: #666;
+  max-width: 560px;
+  margin: 0;
+  color: #dbeafe;
   font-size: 16px;
 }
 
@@ -345,14 +465,14 @@ h2 {
 
 .card {
   background: #ffffff;
-  border: 1px solid #e6ebe8;
-  border-radius: 18px;
+  border: 1px solid var(--line-blue);
+  border-radius: var(--radius-lg);
   padding: 22px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-soft);
 }
 
 .card.destaque {
-  background: #f4f7f5;
+  background: var(--surface-soft);
 }
 
 .label {
@@ -387,6 +507,20 @@ h2 {
   font-size: 26px;
   font-weight: 700;
   color: #1f1f1f;
+  white-space: nowrap;
+}
+
+.link-plano {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  background: var(--brand);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -452,11 +586,12 @@ h2 {
   .cabecalho-perfil {
     align-items: flex-start;
     flex-direction: column;
+    padding: 24px;
   }
 
   .avatar {
-    width: 74px;
-    height: 74px;
+    width: 78px;
+    height: 78px;
     font-size: 32px;
   }
 

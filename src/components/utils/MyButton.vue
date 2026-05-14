@@ -23,11 +23,12 @@ defineProps({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
+  min-height: 40px;
+  padding: 8px 18px;
   border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: transform 0.1s ease, background-color 0.2s;
+  border-radius: var(--radius-md);
+  font-weight: 650;
+  transition: transform 0.1s ease, background-color 0.2s, box-shadow 0.2s;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -36,10 +37,14 @@ defineProps({
   width: 100%;
 }
 
-.primary { background-color: #42b983; color: white; }
-.secondary { background-color: #35495e; color: white; }
-.danger { background-color: #e74c3c; color: white; }
+.primary {
+  background-color: var(--brand);
+  color: white;
+  box-shadow: var(--shadow-button);
+}
+.secondary { background-color: var(--brand-dark); color: white; }
+.danger { background-color: var(--danger-600); color: white; }
 
-button:hover { filter: brightness(0.9); }
+button:hover { filter: brightness(0.96); }
 button:active { transform: scale(0.96); }
 </style>

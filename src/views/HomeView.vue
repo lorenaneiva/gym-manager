@@ -1,11 +1,25 @@
 <template>
-  <main class="home">
+  <main class="home page-shell">
     <section class="container">
-      <h1>Bem-vindo à Academia</h1>
+      <header class="page-header">
+        <span class="eyebrow">FitBlue Gym Manager</span>
+        <h1>Escolha o plano ideal</h1>
+        <p>Planos claros para começar, evoluir e manter sua rotina de treinos.</p>
+      </header>
 
-      <h2>Planos:</h2>
+      <div v-if="carregando" class="state-card">
+        Carregando planos...
+      </div>
 
-      <div class="planos">
+      <div v-else-if="erro" class="state-card error">
+        {{ erro }}
+      </div>
+
+      <div v-else-if="planos.length === 0" class="state-card">
+        Nenhum plano disponível no momento.
+      </div>
+
+      <div v-else class="planos">
         <PlanoCard
           v-for="plano in planos"
           :key="plano.id"
@@ -30,20 +44,41 @@ import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 
 const planos = ref([])
+const carregando = ref(true)
+const erro = ref('')
 const imagemPadrao = 'https://placehold.co/300x190?text=Plano'
 const userStore = useUserStore()
 const router = useRouter()
 
 async function buscarPlanos() {
-  const response = await axios.get(`${API_URL}/planos`)
-  planos.value = response.data
+  try {
+    carregando.value = true
+    erro.value = ''
+    const response = await axios.get(`${API_URL}/planos`)
+    planos.value = response.data.filter((plano) => plano.ativo !== false)
+  } catch (error) {
+    console.error(error)
+    erro.value = 'Não foi possível carregar os planos.'
+  } finally {
+    carregando.value = false
+  }
 }
 
 function assinarPlano(id) {
+  const redirect = `/assinar-plano/${id}`
+
+  if (userStore.isAdmin || userStore.isRecepcionista || userStore.isInstrutor) {
+    router.push('/funcionario')
+    return
+  }
+
   if (userStore.isLogged) {
-    router.push(`/assinar-plano/${id}`)
+    router.push(redirect)
   } else {
-    router.push('/register')
+    router.push({
+      path: '/register',
+      query: { redirect }
+    })
   }
 }
 
@@ -54,31 +89,35 @@ onMounted(() => {
 
 <style scoped>
 .home {
-  min-height: 100vh;
-  background: #f4f7f5;
-  padding: 40px 20px;
+  background: var(--app-background);
 }
 
 .container {
   max-width: 1150px;
   margin: 0 auto;
-  background: white;
-  padding: 40px;
-  border-radius: 22px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  padding: 0;
+}
+
+.page-header {
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  color: var(--brand);
+  font-size: 13px;
+  font-weight: 650;
 }
 
 h1 {
-  text-align: center;
-  font-size: 36px;
-  margin-bottom: 35px;
-  color: #1f1f1f;
+  margin: 8px 0 8px;
+  font-size: clamp(30px, 5vw, 48px);
+  line-height: 1.05;
+  color: var(--text-strong);
 }
 
-h2 {
-  font-size: 24px;
-  margin-bottom: 24px;
-  color: #222;
+.page-header p {
+  margin: 0;
+  color: var(--text-soft);
 }
 
 .planos {
@@ -88,23 +127,22 @@ h2 {
   gap: 28px;
 }
 
+.state-card {
+  padding: 20px;
+  border: 1px solid var(--line-blue);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--text-soft);
+}
+
+.state-card.error {
+  color: var(--danger-700);
+  background: var(--danger-50);
+}
+
 @media (max-width: 600px) {
-  .home {
-    padding: 20px 12px;
-  }
-
-  .container {
-    padding: 24px 16px;
-  }
-
   h1 {
-    font-size: 28px;
     text-align: left;
-  }
-
-  h2 {
-    font-size: 20px;
   }
 }
 </style>
->>>>>>> Stashed changes

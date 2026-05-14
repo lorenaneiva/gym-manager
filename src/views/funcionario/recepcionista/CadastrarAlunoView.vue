@@ -70,7 +70,9 @@ async function salvarAluno() {
       login: login.value,
       password: senha.value,
       role: 'aluno',
-      plano: Number(plano.value)
+      plano: plano.value,
+      planoId: plano.value,
+      ativo: true
     }
 
     if (route.params.id) {

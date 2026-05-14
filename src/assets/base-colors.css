@@ -4,6 +4,13 @@
  */
 
 :root {
+  --nav-height: 76px;
+  --mobile-top-height: 64px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+
   /* ========== CORES PRIMÁRIAS (Azul) ========== */
   /* Usadas para elementos principais, CTAs e navegação */
   --primary-50: #eff6ff;        /* Backgrounds sutis de elementos primários */
@@ -12,6 +19,7 @@
   --primary-600: #2563eb;       /* Cor principal de botões e links */
   --primary-700: #1d4ed8;       /* Hover state de botões primários */
   --primary-800: #1e40af;       /* Texto em badges primários */
+  --primary-900: #172554;
 
   /* ========== CORES NEUTRAS (Cinza) ========== */
   /* Sistema de cores para backgrounds, borders e texto */
@@ -93,16 +101,31 @@
   --role-guest: var(--warning-600);
 
   /* Interface */
+  --app-background: #f6f9ff;
+  --surface: #ffffff;
+  --surface-soft: #eff6ff;
+  --line-blue: #d5e6ff;
+  --brand: #1f65ff;
+  --brand-hover: #1657e8;
+  --brand-dark: #1d347f;
+  --brand-darker: #16295f;
+  --text-strong: #071b55;
+  --text-body: #17316c;
+  --text-soft: #4b7cff;
+  --text-muted: #7a8aa4;
+  --shadow-soft: 0 12px 32px rgba(31, 101, 255, 0.07);
+  --shadow-button: 0 8px 18px rgba(31, 101, 255, 0.28);
+
   --navbar-background: #ffffff;
-  --navbar-border: var(--neutral-200);
-  --navbar-text: var(--neutral-700);
-  --navbar-text-hover: var(--primary-600);
+  --navbar-border: var(--line-blue);
+  --navbar-text: var(--text-body);
+  --navbar-text-hover: var(--brand);
 
   --card-background: #ffffff;
-  --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  --card-shadow: var(--shadow-soft);
 
-  --button-primary-bg: var(--primary-600);
-  --button-primary-hover: var(--primary-700);
+  --button-primary-bg: var(--brand);
+  --button-primary-hover: var(--brand-hover);
   --button-primary-text: #ffffff;
 
   --input-border: var(--neutral-300);

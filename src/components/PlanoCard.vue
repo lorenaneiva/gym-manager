@@ -1,10 +1,7 @@
 <template>
   <div class="plano-card">
-    <div class="imagem-area">
-      <img :src="imagem" :alt="nome" />
-    </div>
-
     <div class="conteudo-card">
+      <span class="tag">Plano</span>
       <h3>{{ nome }}</h3>
 
       <p class="descricao">
@@ -24,7 +21,7 @@
 
 <script setup>
 defineProps({
-  id: Number,
+  id: [Number, String],
   imagem: String,
   nome: String,
   descricao: String,
@@ -39,66 +36,69 @@ defineEmits(['assinar'])
   width: 100%;
   max-width: 340px;
   background: #ffffff;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  border: 1px solid #ddd;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
-  transition: 0.3s ease;
+  border: 1px solid var(--line-blue);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .plano-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
-}
-
-.imagem-area {
-  width: 100%;
-  height: 190px;
-  background: #e9f4ef;
-}
-
-.imagem-area img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px rgba(31, 101, 255, 0.13);
 }
 
 .conteudo-card {
-  padding: 22px;
+  min-height: 310px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+}
+
+.tag {
+  width: fit-content;
+  padding: 6px 12px;
+  border-radius: 999px;
+  color: var(--brand);
+  background: var(--primary-100);
+  font-size: 12px;
+  font-weight: 650;
 }
 
 h3 {
+  margin: 0;
   font-size: 22px;
-  color: #1f1f1f;
+  color: var(--text-strong);
 }
 
 .descricao {
-  min-height: 70px;
-  color: #555;
+  min-height: 64px;
+  margin: 0;
+  color: var(--text-soft);
   line-height: 1.5;
 }
 
 .valor {
-  font-size: 24px;
+  margin: auto 0 0;
+  font-size: 32px;
   font-weight: bold;
-  color: #0b7a4b;
+  color: var(--text-strong);
 }
 
 button {
   width: 100%;
   padding: 14px;
   border: none;
-  border-radius: 12px;
-  background: #0b7a4b;
+  border-radius: var(--radius-md);
+  background: var(--brand);
   color: white;
-  font-weight: bold;
+  font-weight: 650;
+  box-shadow: var(--shadow-button);
   cursor: pointer;
 }
 
 button:hover {
-  background: #095f3b;
+  background: var(--brand-hover);
 }
 </style>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 import { useRouter, useRoute } from 'vue-router'
@@ -14,6 +14,39 @@ const cvv = ref('')
 const referencia = ref('')
 const variasLetras = ref('')
 const dataVencimento = ref('')
+const plano = ref(null)
+const carregando = ref(true)
+const erro = ref('')
+const usarNovoCartao = ref(false)
+
+const cartaoSalvo = computed(() => userStore.user?.cartao || null)
+const precisaInformarCartao = computed(() => !cartaoSalvo.value || usarNovoCartao.value)
+const tituloFluxo = computed(() => userStore.isAluno ? 'Atualizar assinatura' : 'Assinar plano')
+const textoBotao = computed(() => userStore.isAluno ? 'Atualizar plano' : 'Confirmar assinatura')
+
+function dadosCartao() {
+  if (!precisaInformarCartao.value && cartaoSalvo.value) {
+    return cartaoSalvo.value
+  }
+
+  return {
+    formaPagamento: formaPagamento.value,
+    final: referencia.value.slice(-4),
+    nome: variasLetras.value.trim(),
+    validade: dataVencimento.value
+  }
+}
+
+async function buscarPlano() {
+  try {
+    const response = await axios.get(`${API_URL}/planos/${route.params.id}`)
+    plano.value = response.data
+  } catch {
+    erro.value = 'Plano não encontrado.'
+  } finally {
+    carregando.value = false
+  }
+}
 
 const atualizarRolePatch = async () => {
   try {
@@ -23,11 +56,20 @@ const atualizarRolePatch = async () => {
       return
     }
 
-    const planoId = Number(route.params.id)
+    const planoId = route.params.id
+    const deveValidarCartao = precisaInformarCartao.value
+    const eraAluno = userStore.isAluno
+
+    if (deveValidarCartao && (!referencia.value || referencia.value.length < 12 || !variasLetras.value.trim() || !dataVencimento.value || !cvv.value)) {
+      alert('Preencha os dados do cartão para continuar.')
+      return
+    }
 
     const response = await axios.patch(`${API_URL}/users/${userStore.user.id}`, {
       role: 'aluno',
       plano: planoId,
+      planoId,
+      cartao: dadosCartao(),
       ativo: true
     })
 
@@ -36,7 +78,7 @@ const atualizarRolePatch = async () => {
     router.push({
       path: '/perfil',
       query: {
-        sucesso: 'plano-assinado'
+        sucesso: eraAluno ? 'plano-atualizado' : 'plano-assinado'
       }
     })
   } catch (error) {
@@ -95,16 +137,40 @@ const cvvValido = computed(() => {
 const letrasCertas = computed(() => {
   return /^[a-zA-Z ]*$/.test(variasLetras.value)
 })
+
+onMounted(() => {
+  buscarPlano()
+})
 </script>
 
 <template>
   <main>
     <div id="cabecalho">
-      <h3>Escolha sua forma de pagamento</h3>
+      <h3>{{ tituloFluxo }}</h3>
+      <p v-if="plano" id="subtitulo">
+        {{ plano.nome }} - R$ {{ Number(plano.valor).toFixed(2).replace('.', ',') }}
+      </p>
     </div>
 
-    <div id="form">
-      <div class="checkbox-item">
+    <div v-if="carregando" class="msg-estado carregando">
+      Carregando assinatura...
+    </div>
+
+    <div v-else-if="erro" class="msg-estado erro">
+      {{ erro }}
+    </div>
+
+    <div v-else id="form">
+      <div v-if="cartaoSalvo && !usarNovoCartao" class="cartao-salvo">
+        <span>Cartão salvo</span>
+        <strong>{{ cartaoSalvo.formaPagamento }} final {{ cartaoSalvo.final }}</strong>
+        <button type="button" @click="usarNovoCartao = true">
+          Usar outro cartão
+        </button>
+      </div>
+
+      <template v-if="precisaInformarCartao">
+        <div class="checkbox-item">
         <input
           v-model="formaPagamento"
           value="credito"
@@ -116,9 +182,9 @@ const letrasCertas = computed(() => {
         <label for="pagamento-credito">
           Cartão de crédito
         </label>
-      </div>
+        </div>
 
-      <div class="checkbox-item">
+        <div class="checkbox-item">
         <input
           v-model="formaPagamento"
           value="debito"
@@ -130,9 +196,9 @@ const letrasCertas = computed(() => {
         <label for="pagamento-debito">
           Cartão de débito
         </label>
-      </div>
+        </div>
 
-      <div class="campo">
+        <div class="campo">
         <label>Número do cartão</label>
 
         <input
@@ -146,9 +212,9 @@ const letrasCertas = computed(() => {
         <p v-if="!valido" class="erro-validacao">
           Formato de referência inválido.
         </p>
-      </div>
+        </div>
 
-      <div class="campo">
+        <div class="campo">
         <label>Nome do cartão</label>
 
         <input
@@ -161,9 +227,9 @@ const letrasCertas = computed(() => {
         <p v-if="!letrasCertas" class="erro-validacao">
           Formato de referência inválido.
         </p>
-      </div>
+        </div>
 
-      <div id="duplo">
+        <div id="duplo">
         <div class="inputs">
           <label>Data de vencimento</label>
 
@@ -191,7 +257,8 @@ const letrasCertas = computed(() => {
             Formato de referência inválido.
           </p>
         </div>
-      </div>
+        </div>
+      </template>
 
       <div id="botoes">
         <button
@@ -199,13 +266,13 @@ const letrasCertas = computed(() => {
           id="cadastrar"
           @click.prevent="atualizarRolePatch"
         >
-          Salvar alterações
+          {{ textoBotao }}
         </button>
 
         <button
           type="button"
           id="cancelar"
-          @click="router.push('/')"
+          @click="router.push(userStore.isAluno ? '/perfil' : '/planos')"
         >
           Cancelar
         </button>
@@ -231,6 +298,12 @@ h3 {
   margin: 0 0 4px;
 }
 
+#subtitulo {
+  color: #2563eb;
+  font-size: 13px;
+  margin: 0;
+}
+
 #form {
   background-color: #fff;
   border: 0.5px solid #bfdbfe;
@@ -240,6 +313,53 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+
+.cartao-salvo {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  background: #eff6ff;
+}
+
+.cartao-salvo span {
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cartao-salvo strong {
+  color: #172554;
+}
+
+.cartao-salvo button {
+  width: fit-content;
+  padding: 8px 12px;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #fff;
+  color: #2563eb;
+  cursor: pointer;
+}
+
+.msg-estado {
+  max-width: 640px;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.carregando {
+  color: #1e3a8a;
+  background-color: #dbeafe;
+}
+
+.erro {
+  color: #dc2626;
+  background-color: #fef2f2;
 }
 
 label {

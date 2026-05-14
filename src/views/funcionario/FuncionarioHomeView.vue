@@ -8,16 +8,35 @@ const userStore = useUserStore()
 </script>
 
 <template>
-  <!-- ADMIN -->
-  <ConteudoHomeAdmin v-if="userStore.isAdmin" />
+  <main class="funcionario-home page-shell">
+    <header class="page-header">
+      <h1>Dashboard</h1>
+      <p>Visão geral da sua academia</p>
+    </header>
 
-  <!-- INSTRUTOR -->
-  <ConteudoHomeInstrutor v-else-if="userStore.isInstrutor" />
+    <ConteudoHomeAdmin v-if="userStore.isAdmin" />
 
-  <!-- RECEPCIONISTA -->
-  <ConteudoHomeRecepcionista v-else-if="userStore.isRecepcionista" />
+    <ConteudoHomeInstrutor v-else-if="userStore.isInstrutor" />
+
+    <ConteudoHomeRecepcionista v-else-if="userStore.isRecepcionista" />
+  </main>
 </template>
 
 <style scoped>
+.funcionario-home {
+  display: grid;
+  gap: 24px;
+}
 
+.page-header h1 {
+  margin: 0 0 6px;
+  color: var(--text-strong);
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.page-header p {
+  margin: 0;
+  color: var(--text-soft);
+}
 </style>

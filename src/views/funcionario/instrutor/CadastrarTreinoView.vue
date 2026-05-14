@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
+import { API_URL } from '@/api';
 
 const route = useRoute();
 const userStore = useUserStore();
@@ -21,7 +22,7 @@ const erros = ref({});
 const buscarAlunos = async () => {
   try {
     // Busca na API apenas os usuários que têm a role "aluno"
-    const response = await axios.get('http://localhost:3000/users?role=aluno');
+    const response = await axios.get(`${API_URL}/users?role=aluno`);
     alunos.value = response.data;
   } catch (error) {
     console.error('Erro ao buscar alunos:', error);
@@ -55,7 +56,7 @@ const validarESalvar = async () => {
   // Se o objeto de erros continuar vazio, significa que passou na validação
   if (Object.keys(erros.value).length === 0) {
     try {
-      await axios.post('http://localhost:3000/treinos', {
+      await axios.post(`${API_URL}/treinos`, {
         alunoId: alunoId.value,
         instrutorId: userStore.user?.id,
         nome: nomeTreino.value,

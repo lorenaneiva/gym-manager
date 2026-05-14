@@ -2,12 +2,15 @@
 import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { API_URL } from '@/api';
+import { useUserStore } from '@/stores/user';
 
 defineOptions({
   name: 'AlunosView'
 });
 
 const router = useRouter();
+const userStore = useUserStore();
 
 const usuarios = ref([]);
 const planos = ref([]);
@@ -22,8 +25,8 @@ const buscaUsuario = ref('');
 const buscarDados = async () => {
   try {
     const [resUsuarios, resPlanos] = await Promise.all([
-      axios.get('http://localhost:3000/users'),
-      axios.get('http://localhost:3000/planos')
+      axios.get(`${API_URL}/users`),
+      axios.get(`${API_URL}/planos`)
     ]);
 
     usuarios.value = resUsuarios.data;
@@ -49,7 +52,7 @@ const getNomePlano = (aluno) => {
   const plano = planos.value.find(p => String(p.id) === String(planoId));
 
   return plano ? plano.nome : 'Plano não encontrado';
-};''
+};
 
 // Computed Properties para separar e filtrar as listas
 const alunosFiltrados = computed(() => {
@@ -68,6 +71,8 @@ const usuariosFiltrados = computed(() => {
   const termo = buscaUsuario.value.toLowerCase();
   return guests.filter(u => u.name.toLowerCase().includes(termo));
 });
+
+const podeGerenciarAlunos = computed(() => userStore.isAdmin || userStore.isRecepcionista);
 
 // Ações dos botões
 const irParaAgendamento = (alunoId) => {
@@ -123,12 +128,12 @@ onMounted(() => {
               <tr>
                 <th>Nome do Aluno</th>
                 <th>Plano Atual</th>
-                <th class="col-acao">Ações</th>
+                <th v-if="podeGerenciarAlunos" class="col-acao">Ações</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="alunosFiltrados.length === 0">
-                <td colspan="3" class="empty-state">Nenhum aluno encontrado.</td>
+                <td :colspan="podeGerenciarAlunos ? 3 : 2" class="empty-state">Nenhum aluno encontrado.</td>
               </tr>
               <tr v-for="aluno in alunosFiltrados" :key="aluno.id">
                 <td class="col-nome">{{ aluno.name }}</td>
@@ -140,7 +145,7 @@ onMounted(() => {
                     {{ getNomePlano(aluno) }}
                   </span>
                 </td>
-                <td class="col-acao">
+                <td v-if="podeGerenciarAlunos" class="col-acao">
                   <button class="btn-agendar" @click="irParaAgendamento(aluno.id)">
                     Agendar Aula
                   </button>
@@ -152,7 +157,7 @@ onMounted(() => {
       </section>
 
       <!-- TABELA DE USUÁRIOS (GUESTS) -->
-      <section class="tabela-section">
+      <section v-if="podeGerenciarAlunos" class="tabela-section">
         <div class="section-header">
           <h4>Usuários / Visitantes ({{ usuariosFiltrados.length }})</h4>
           <div class="busca-container">

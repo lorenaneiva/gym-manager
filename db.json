@@ -86,8 +86,10 @@
       "name": "lorena",
       "login": "lorena123",
       "password": "123",
-      "role": "guest",
-      "plano": null,
+      "role": "aluno",
+      "plano": "1",
+      "planoId": "1",
+      "ativo": true,
       "id": "mJpIlrH_F30"
     },
     {
@@ -124,6 +126,14 @@
       "duracaoDias": 90,
       "ativo": true,
       "id": "0_EkTUEw06w"
+    },
+    {
+      "id": "vip-anual",
+      "nome": "Plano VIP Anual",
+      "descricao": "Experiencia completa com acesso anual, acompanhamento prioritario e beneficios exclusivos.",
+      "valor": 899.9,
+      "duracaoDias": 365,
+      "ativo": true
     }
   ],
   "mensalidades": [
